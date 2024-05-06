@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # from pypi
+    'captcha',
+    'crispy_forms',
+    "crispy_bootstrap5",
+    'django_celery_results',
+    'django_celery_beat',
+    # internal apps
     'core',
 ]
 
@@ -137,3 +144,10 @@ STATIC_ROOT = '/vol/web/static'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery
+
+CELERY_BROKER_URL = 'amqp://guest:guest@broker:5672//'
+CELERY_RESULT_BACKEND = 'django_celery_results.backends.database:DatabaseBackend'
+CELERY_RESULT_EXTENDED = True
+CELERY_TIMEZONE = "Asia/Dhaka"
