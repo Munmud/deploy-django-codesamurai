@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     # internal apps
     'core',
     'authentication',
+    'waste',
+    'report',
 ]
 
 MIDDLEWARE = [
@@ -168,6 +170,9 @@ THEME_LAYOUT_DIR = THEME_LAYOUT_DIR
 THEME_VARIABLES = THEME_VARIABLES
 
 
+# Load Data
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+
 # Crispy
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -186,3 +191,10 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'moontasir042@gmail.com'  # Your email address
 EMAIL_HOST_PASSWORD = 'sutz opho plfu nbvv'  # Your email password
+
+
+# Project related Variables
+GROUP_NAME_SYSTEM_ADMIN = 'System Admin'
+GROUP_NAME_STS_MANAGER = 'STS Manager'
+GROUP_NAME_LANDFILL_MANAGER = 'Landfill Manager'
+FUEL_COST_PER_LITRE = 120
