@@ -53,25 +53,25 @@ services:
     depends_on:
       - db
       - app
-  # celery_beat:
-  #   build:
-  #     context: .
-  #   command: >
-  #     sh -c "python manage.py wait_for_db &&
-  #     celery -A app beat -l INFO"
-  #   volumes:
-  #     - ./app:/app
-  #     - ./data/web:/vol/web
-  #   environment:
-  #     - SECRET_KEY=devsecretkey
-  #     - DEBUG=1
-  #     - DB_HOST=db
-  #     - DB_NAME=devdb
-  #     - DB_USER=devuser
-  #     - DB_PASS=changeme
-  #   depends_on:
-  #     - db
-  #     - app
+  celery_beat:
+    build:
+      context: .
+    command: >
+      sh -c "python manage.py wait_for_db &&
+      celery -A app beat -l INFO"
+    volumes:
+      - ./app:/app
+      - ./data/web:/vol/web
+    environment:
+      - SECRET_KEY=devsecretkey
+      - DEBUG=1
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on:
+      - db
+      - app
 
 
 volumes:
