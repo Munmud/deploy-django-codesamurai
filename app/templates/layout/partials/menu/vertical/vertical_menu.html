@@ -1,0 +1,70 @@
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+  <!-- ! Hide app brand if navbar-full -->
+  {% if not navbar_full %}
+    <div class="app-brand demo">
+      <a href="{% url 'dashboard' %}" class="app-brand-link">
+        <span class="app-brand-logo demo">{% include 'partials/logo.html' with width=25 withbg='#696cff' %}</span>
+        <span class="app-brand-text demo menu-text fw-bold ms-2">{% get_theme_variables 'template_name' %}</span>
+      </a>
+
+      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none"><i class="bx bx-chevron-left bx-sm align-middle"></i></a>
+    </div>
+  {% endif %}
+
+  <div class="menu-inner-shadow"></div>
+
+  <ul class="menu-inner py-1">
+    {% if user.is_authenticated %}
+      <li class="menu-item {% if 'dashboard' == request.resolver_match.url_name or '/dashbord/' in request.path %}{% endif %}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-home-circle"></i>
+          <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
+          {% comment %} <span class="badge bg-danger rounded-pill ms-auto">5</span> {% endcomment %}
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {% if 'dashboard' == request.resolver_match.url_name %}{% endif %}">
+            <a href="{% url 'dashboard' %}" class="menu-link"><div class="text-truncate" data-i18n="Analytics">Analytics</div></a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Account -->
+      <li class="menu-item {% if '/account_settings/' in request.path %}{% endif %}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-dock-top"></i>
+          <div class="text-truncate" data-i18n="Account Settings">Account Settings</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {% if '/update_profile/' in request.path %}{% endif %}">
+            <a href="{% url 'update_profile' %}" class="menu-link"><div class="text-truncate" data-i18n="Update Profile">Update Profile</div></a>
+          </li>
+        </ul>
+      </li>
+    {% endif %}
+    <!-- Auth -->
+    <li class="menu-item open {% if '/auth/' in request.path %}{% endif %}">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+        <div class="text-truncate" data-i18n="Authentications">Authentications</div>
+      </a>
+      <ul class="menu-sub">
+        {% if user.is_authenticated %}
+          <li class="menu-item {% if '/change_user_password/' in request.path %}{% endif %}">
+            <a href="{% url 'change_user_password' %}" class="menu-link"><div class="text-truncate" data-i18n="Change Password">Change Password</div></a>
+          </li>
+
+          <li class="menu-item {% if '/logout/' in request.path %}{% endif %}">
+            <a href="{% url 'logout' %}" class="menu-link"><div class="text-truncate" data-i18n="Logout">Logout</div></a>
+          </li>
+        {% else %}
+          <li class="menu-item {% if '/login/' in request.path %}{% endif %}">
+            <a href="{% url 'login' %}" class="menu-link"><div class="text-truncate" data-i18n="Login">Login</div></a>
+          </li>
+          <li class="menu-item {% if '/forgot_password/' in request.path %}{% endif %}">
+            <a href="{% url 'forget_password' %}" class="menu-link"><div class="text-truncate" data-i18n="Frogot Password">Frogot Password</div></a>
+          </li>
+        {% endif %}
+      </ul>
+    </li>
+  </ul>
+</aside>

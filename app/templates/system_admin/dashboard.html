@@ -1,0 +1,920 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    #map {
+      height: 380px;
+    }
+  </style>
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+  <script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+  <script>
+    /**
+     * Dashboard Analytics
+     */
+    
+    'use strict'
+    ;(function () {
+      let cardColor, headingColor, axisColor, shadeColor, borderColor
+    
+      cardColor = config.colors.white
+      headingColor = config.colors.headingColor
+      axisColor = config.colors.axisColor
+      borderColor = config.colors.borderColor
+    
+      // Income Chart - Area chart
+      // --------------------------------------------------------------------
+      const incomeChartEl = document.querySelector('#incomeChart'),
+        incomeChartConfig = {
+          series: [
+            {
+              data: [{% for value in fuel_cost_data_last7_days_values %}{{value}}, {% endfor %}]
+            }
+          ],
+          chart: {
+            height: 215,
+            parentHeightOffset: 0,
+            parentWidthOffset: 0,
+            toolbar: {
+              show: false
+            },
+            type: 'area'
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            width: 2,
+            curve: 'smooth'
+          },
+          legend: {
+            show: false
+          },
+          markers: {
+            size: 6,
+            colors: 'transparent',
+            strokeColors: 'transparent',
+            strokeWidth: 4,
+            discrete: [
+              {
+                fillColor: config.colors.white,
+                seriesIndex: 0,
+                dataPointIndex: 7,
+                strokeColor: config.colors.primary,
+                strokeWidth: 2,
+                size: 6,
+                radius: 8
+              }
+            ],
+            hover: {
+              size: 7
+            }
+          },
+          colors: [config.colors.primary],
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shade: shadeColor,
+              shadeIntensity: 0.6,
+              opacityFrom: 0.5,
+              opacityTo: 0.25,
+              stops: [0, 95, 100]
+            }
+          },
+          grid: {
+            borderColor: borderColor,
+            strokeDashArray: 3,
+            padding: {
+              top: -20,
+              bottom: -8,
+              left: -10,
+              right: 8
+            }
+          },
+          xaxis: {
+            categories: [{% for value in fuel_cost_data_last7_days_keys %}"{{value|date:"m"}}-{{value|date:"d"}}", {% endfor %}],
+            axisBorder: {
+              show: false
+            },
+            axisTicks: {
+              show: false
+            },
+            labels: {
+              show: true,
+              style: {
+                fontSize: '13px',
+                colors: axisColor
+              }
+            }
+          },
+          yaxis: {
+            labels: {
+              show: false
+            },
+            min: 10,
+            max: 100000,
+            tickAmount: 4
+          }
+        }
+      if (typeof incomeChartEl !== undefined && incomeChartEl !== null) {
+        const incomeChart = new ApexCharts(incomeChartEl, incomeChartConfig)
+        incomeChart.render()
+      }
+    })()
+  </script>
+{% endblock %}
+
+{% block content %}
+  <!-- Expense Overview -->
+  <div class="{{ container_class }}">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="d-flex align-items-end row">
+            <div class="col-sm-7">
+              <div class="card-body">
+                <h5 class="card-title text-primary">Welcome {{ user.username }}! 🎉</h5>
+                {% comment %} <p class="mb-4">
+                  You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in your profile.
+                </p>
+                {% endcomment %}
+
+                <a href="{% url 'admin:index' %}" class="btn btn-sm btn-outline-primary">Open Admin Panel</a>
+              </div>
+            </div>
+            <div class="col-sm-5 text-center text-sm-left">
+              <div class="card-body pb-0 px-0 px-md-4">
+                <img src="{% static 'assets/img/illustrations/man-with-laptop-light.png' %}" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header">
+            <div class="d-flex p-4 pt-3">
+              <div class="avatar flex-shrink-0 me-3">
+                <img src="{% static 'assets/img/icons/unicons/wallet.png' %}" alt="User" />
+              </div>
+              <div>
+                <small class="text-muted d-block">Total Cost</small>
+                <div class="d-flex align-items-center">
+                  <h6 class="mb-0 me-1">$459.10</h6>
+                  <small class="text-success fw-semibold">
+                    <i class="bx bx-chevron-up"></i>
+                    42.9%
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body px-0">
+            <div class="tab-content p-0">
+              <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+                <div id="incomeChart"></div>
+                <div class="d-flex justify-content-center pt-4 gap-2">
+                  <div class="flex-shrink-0">
+                    <div id="expensesOfWeek"></div>
+                  </div>
+                  <div>
+                    <p class="mb-n1 mt-1">Fuel Cost This Week</p>
+                    <small class="text-muted">$39 less than last week</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- / Expense Overview -->
+  <br />
+  <div class="{{ container_class }}">
+    <div id="map"></div>
+  </div>
+
+  <script>
+    var map = L.map('map')
+    map.setView([23.804693584521388, 90.41487880696623], 11)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map)
+
+    var sts_icon = L.icon({
+          iconUrl: 'https://cdn-icons-png.flaticon.com/512/1869/1869668.png', 
+          iconSize: [25, 25],
+          iconAnchor: [16, 25],
+          popupAnchor: [0, -25]
+      });
+
+    var landfill_icon = L.icon({
+          iconUrl: 'https://cdn-icons-png.freepik.com/512/8134/8134420.png', 
+          iconSize: [25, 25],
+          iconAnchor: [16, 25],
+          popupAnchor: [0, -25]
+      });
+    
+    
+      {% for sts in sts_list %}
+      var marker = L.marker([{{ sts.latitude }},{{ sts.longitude }}],{icon: sts_icon}).addTo(map)
+      marker.bindPopup('{{ sts.address }}')
+    {% endfor %}
+
+    {% for landfill in landfill_list %}
+      var marker = L.marker([{{ landfill.latitude }},{{ landfill.longitude }}],{icon: landfill_icon}).addTo(map)
+      marker.bindPopup('{{ landfill.address }}')
+    {% endfor %}
+
+    
+  </script>
+{% endblock %}
+
+{% comment %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    #map {
+      height: 380px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="panel-header panel-header-lg">
+    <canvas id="bigDashboardChart"></canvas>
+  </div>
+  <div class="content">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-chart">
+          <div class="card-header">
+            <h5 class="card-category">Last 7 Days</h5>
+            <h4 class="card-title">Fuel Cost</h4>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="lineChartExample"></canvas>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card card-chart">
+          <div class="card-header">
+            <h5 class="card-category">Last 7 Days</h5>
+            <h4 class="card-title">Garbage Transfer</h4>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="lineChartExampleWithNumbersAndGrid"></canvas>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div id="map"></div>
+      </div>
+    </div>
+    <br />
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-category">Garbage</h5>
+            <h4 class="card-title">Ongoing Garbage Transfer</h4>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead class="text-primary">
+                  <th>ID</th>
+                  <th>STS</th>
+                  <th>Landfill</th>
+                  <th>Vehicle</th>
+                  <th>Volume</th>
+                  <th>Status</th>
+                </thead>
+                <tbody>
+                  {% for transfer in ongoing_waste_transfers %}
+                    <tr>
+                      <td>{{ transfer.id }}</td>
+                      <td>{{ transfer.sts }}</td>
+                      <td>{{ transfer.landfill }}</td>
+                      <td>{{ transfer.vehicle }}</td>
+                      <td>{{ transfer.volume }}</td>
+                      <td>{{ transfer.status }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script>
+    var map = L.map('map')
+    map.setView([23.804693584521388, 90.41487880696623], 11)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map)
+
+    var sts_icon = L.icon({
+          iconUrl: 'https://cdn-icons-png.flaticon.com/512/1869/1869668.png', 
+          iconSize: [25, 25],
+          iconAnchor: [16, 25],
+          popupAnchor: [0, -25]
+      });
+
+    var landfill_icon = L.icon({
+          iconUrl: 'https://cdn-icons-png.freepik.com/512/8134/8134420.png', 
+          iconSize: [25, 25],
+          iconAnchor: [16, 25],
+          popupAnchor: [0, -25]
+      });
+    
+    
+      {% for sts in sts_list %}
+      var marker = L.marker([{{ sts.latitude }},{{ sts.longitude }}],{icon: sts_icon}).addTo(map)
+      marker.bindPopup('{{ sts.address }}')
+    {% endfor %}
+
+    {% for landfill in landfill_list %}
+      var marker = L.marker([{{ landfill.latitude }},{{ landfill.longitude }}],{icon: landfill_icon}).addTo(map)
+      marker.bindPopup('{{ landfill.address }}')
+    {% endfor %}
+
+    
+  </script>
+  <script src="{% static 'assets\js\plugins\chartjs.min.js' %}"></script>
+  <!-- Now Ui Dashboard DEMO methods, don't include it in your project! -->
+
+  <script>
+demo = {
+  initPickColor: function () {
+    $(".pick-class-label").click(function () {
+      var new_class = $(this).attr("new-class");
+      var old_class = $("#display-buttons").attr("data-class");
+      var display_div = $("#display-buttons");
+      if (display_div.length) {
+        var display_buttons = display_div.find(".btn");
+        display_buttons.removeClass(old_class);
+        display_buttons.addClass(new_class);
+        display_div.attr("data-class", new_class);
+      }
+    });
+  },
+
+  initDocChart: function () {
+    chartColor = "#FFFFFF";
+
+    // General configuration for the charts with Line gradientStroke
+    gradientChartOptionsConfiguration = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        bodySpacing: 4,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        xPadding: 10,
+        yPadding: 10,
+        caretPadding: 10,
+      },
+      responsive: true,
+      scales: {
+        yAxes: [
+          {
+            display: 0,
+            gridLines: 0,
+            ticks: {
+              display: false,
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              drawTicks: false,
+              display: false,
+              drawBorder: false,
+            },
+          },
+        ],
+        xAxes: [
+          {
+            display: 0,
+            gridLines: 0,
+            ticks: {
+              display: false,
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              drawTicks: false,
+              display: false,
+              drawBorder: false,
+            },
+          },
+        ],
+      },
+      layout: {
+        padding: {
+          left: 0,
+          right: 0,
+          top: 15,
+          bottom: 15,
+        },
+      },
+    };
+
+    ctx = document.getElementById("lineChartExample").getContext("2d");
+
+    gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, "#80b6f4");
+    gradientStroke.addColorStop(1, chartColor);
+
+    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
+    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
+    gradientFill.addColorStop(1, "rgba(249, 99, 59, 0.40)");
+
+    myChart = new Chart(ctx, {
+      type: "line",
+      responsive: true,
+      data: {
+        labels: [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ],
+        datasets: [
+          {
+            label: "Active Users",
+            borderColor: "#f96332",
+            pointBorderColor: "#FFF",
+            pointBackgroundColor: "#f96332",
+            pointBorderWidth: 2,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 1,
+            pointRadius: 4,
+            fill: true,
+            backgroundColor: gradientFill,
+            borderWidth: 2,
+            data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 630],
+          },
+        ],
+      },
+      options: gradientChartOptionsConfiguration,
+    });
+  },
+
+  initDashboardPageCharts: function () {
+    chartColor = "#FFFFFF";
+
+    // General configuration for the charts with Line gradientStroke
+    gradientChartOptionsConfiguration = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        bodySpacing: 4,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        xPadding: 10,
+        yPadding: 10,
+        caretPadding: 10,
+      },
+      responsive: 1,
+      scales: {
+        yAxes: [
+          {
+            display: 0,
+            gridLines: 0,
+            ticks: {
+              display: false,
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              drawTicks: false,
+              display: false,
+              drawBorder: false,
+            },
+          },
+        ],
+        xAxes: [
+          {
+            display: 0,
+            gridLines: 0,
+            ticks: {
+              display: false,
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              drawTicks: false,
+              display: false,
+              drawBorder: false,
+            },
+          },
+        ],
+      },
+      layout: {
+        padding: {
+          left: 0,
+          right: 0,
+          top: 15,
+          bottom: 15,
+        },
+      },
+    };
+
+    gradientChartOptionsConfigurationWithNumbersAndGrid = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        bodySpacing: 4,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        xPadding: 10,
+        yPadding: 10,
+        caretPadding: 10,
+      },
+      responsive: true,
+      scales: {
+        yAxes: [
+          {
+            gridLines: 0,
+            gridLines: {
+              zeroLineColor: "transparent",
+              drawBorder: false,
+            },
+          },
+        ],
+        xAxes: [
+          {
+            display: 0,
+            gridLines: 0,
+            ticks: {
+              display: false,
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              drawTicks: false,
+              display: false,
+              drawBorder: false,
+            },
+          },
+        ],
+      },
+      layout: {
+        padding: {
+          left: 0,
+          right: 0,
+          top: 15,
+          bottom: 15,
+        },
+      },
+    };
+
+    var ctx = document.getElementById("bigDashboardChart").getContext("2d");
+
+    var gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, "#80b6f4");
+    gradientStroke.addColorStop(1, chartColor);
+
+    var gradientFill = ctx.createLinearGradient(0, 200, 0, 50);
+    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
+    gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
+
+    var myChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [
+          "JAN",
+          "FEB",
+          "MAR",
+          "APR",
+          "MAY",
+          "JUN",
+          "JUL",
+          "AUG",
+          "SEP",
+          "OCT",
+          "NOV",
+          "DEC",
+        ],
+        datasets: [
+          {
+            label: "Data",
+            borderColor: chartColor,
+            pointBorderColor: chartColor,
+            pointBackgroundColor: "#1e3d60",
+            pointHoverBackgroundColor: "#1e3d60",
+            pointHoverBorderColor: chartColor,
+            pointBorderWidth: 1,
+            pointHoverRadius: 7,
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            fill: true,
+            backgroundColor: gradientFill,
+            borderWidth: 2,
+            data: [100, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95],
+          },
+        ],
+      },
+      options: {
+        layout: {
+          padding: {
+            left: 20,
+            right: 20,
+            top: 0,
+            bottom: 0,
+          },
+        },
+        maintainAspectRatio: false,
+        tooltips: {
+          backgroundColor: "#fff",
+          titleFontColor: "#333",
+          bodyFontColor: "#666",
+          bodySpacing: 4,
+          xPadding: 12,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest",
+        },
+        legend: {
+          position: "bottom",
+          fillStyle: "#FFF",
+          display: false,
+        },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                fontColor: "rgba(255,255,255,0.4)",
+                fontStyle: "bold",
+                beginAtZero: true,
+                maxTicksLimit: 5,
+                padding: 10,
+              },
+              gridLines: {
+                drawTicks: true,
+                drawBorder: false,
+                display: true,
+                color: "rgba(255,255,255,0.1)",
+                zeroLineColor: "transparent",
+              },
+            },
+          ],
+          xAxes: [
+            {
+              gridLines: {
+                zeroLineColor: "transparent",
+                display: false,
+              },
+              ticks: {
+                padding: 10,
+                fontColor: "rgba(255,255,255,0.4)",
+                fontStyle: "bold",
+              },
+            },
+          ],
+        },
+      },
+    });
+
+    var cardStatsMiniLineColor = "#fff",
+      cardStatsMiniDotColor = "#fff";
+
+    ctx = document.getElementById("lineChartExample").getContext("2d");
+
+    gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, "#80b6f4");
+    gradientStroke.addColorStop(1, chartColor);
+
+    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
+    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
+    gradientFill.addColorStop(1, "rgba(249, 99, 59, 0.40)");
+
+    myChart = new Chart(ctx, {
+      type: "line",
+      responsive: true,
+      data: {
+        labels: [{% for value in fuel_cost_data_last7_days_keys %}"{{value|date:"m"}}-{{value|date:"d"}}", {% endfor %}],
+        datasets: [
+          {
+            label: "Tk",
+            borderColor: "#f96332",
+            pointBorderColor: "#FFF",
+            pointBackgroundColor: "#f96332",
+            pointBorderWidth: 2,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 1,
+            pointRadius: 4,
+            fill: true,
+            backgroundColor: gradientFill,
+            borderWidth: 2,
+            data: [{% for value in fuel_cost_data_last7_days_values %}{{value}}, {% endfor %}],
+          },
+        ],
+      },
+      options: gradientChartOptionsConfiguration,
+    });
+
+    ctx = document
+      .getElementById("lineChartExampleWithNumbersAndGrid")
+      .getContext("2d");
+
+    gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, "#18ce0f");
+    gradientStroke.addColorStop(1, chartColor);
+
+    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
+    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
+    gradientFill.addColorStop(1, hexToRGB("#18ce0f", 0.4));
+
+    myChart = new Chart(ctx, {
+      type: "line",
+      responsive: true,
+      data: { 
+        labels: [{% for value in volume_data_last7_days_values %}{{value|date:"Y-m-d H:i:s"}}, {% endfor %}],
+        datasets: [
+          {
+            label: "tons",
+            borderColor: "#18ce0f",
+            pointBorderColor: "#FFF",
+            pointBackgroundColor: "#18ce0f",
+            pointBorderWidth: 2,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 1,
+            pointRadius: 4,
+            fill: true,
+            backgroundColor: gradientFill,
+            borderWidth: 2,
+            data: [{% for value in volume_data_last7_days_values %}{{value}}, {% endfor %}],
+          },
+        ],
+      },
+      options: gradientChartOptionsConfigurationWithNumbersAndGrid,
+    });
+
+    var e = document
+      .getElementById("barChartSimpleGradientsNumbers")
+      .getContext("2d");
+
+    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
+    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
+    gradientFill.addColorStop(1, hexToRGB("#2CA8FF", 0.6));
+
+    var a = {
+      type: "bar",
+      data: {
+        labels: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
+        datasets: [
+          {
+            label: "Active Countries",
+            backgroundColor: gradientFill,
+            borderColor: "#2CA8FF",
+            pointBorderColor: "#FFF",
+            pointBackgroundColor: "#2CA8FF",
+            pointBorderWidth: 2,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 1,
+            pointRadius: 4,
+            fill: true,
+            borderWidth: 1,
+            data: [80, 99, 86, 96, 123, 85, 100, 75, 88, 90, 123, 155],
+          },
+        ],
+      },
+      options: {
+        maintainAspectRatio: false,
+        legend: {
+          display: false,
+        },
+        tooltips: {
+          bodySpacing: 4,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest",
+          xPadding: 10,
+          yPadding: 10,
+          caretPadding: 10,
+        },
+        responsive: 1,
+        scales: {
+          yAxes: [
+            {
+              gridLines: 0,
+              gridLines: {
+                zeroLineColor: "transparent",
+                drawBorder: false,
+              },
+            },
+          ],
+          xAxes: [
+            {
+              display: 0,
+              gridLines: 0,
+              ticks: {
+                display: false,
+              },
+              gridLines: {
+                zeroLineColor: "transparent",
+                drawTicks: false,
+                display: false,
+                drawBorder: false,
+              },
+            },
+          ],
+        },
+        layout: {
+          padding: {
+            left: 0,
+            right: 0,
+            top: 15,
+            bottom: 15,
+          },
+        },
+      },
+    };
+
+    var viewsChart = new Chart(e, a);
+  },
+};
+    $(document).ready(function () {
+      // Javascript method's body can be found in assets/js/demos.js
+      demo.initDashboardPageCharts();
+
+    });
+  </script>
+{% endblock %} {% endcomment %}

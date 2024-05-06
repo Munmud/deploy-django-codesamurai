@@ -1,0 +1,27 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}" />
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+  <script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+  <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

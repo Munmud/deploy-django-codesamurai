@@ -1,0 +1,51 @@
+{% extends layout_path %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Login - Pages
+{% endblock %}
+
+{% block page_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'assets/vendor/css/pages/page-auth.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+      <div class="authentication-inner">
+        <!-- Login -->
+        <div class="card">
+          <div class="card-body">
+            <!-- Logo -->
+            <div class="app-brand justify-content-center">
+              <a href="{% url 'dashboard' %}" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo">{% include 'partials/logo.html' with width=25 withbg='#696cff' %}</span>
+                <span class="app-brand-text demo text-body fw-bold">{% get_theme_variables 'template_name' %}</span>
+              </a>
+            </div>
+            <!-- /Logo -->
+            <h4 class="mb-2">Welcome to{% get_theme_variables 'template_name' %}! 👋</h4>
+            <p class="mb-4">Please sign-in to your account and start the adventure</p>
+
+            <form method="post">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <div class="mb-3">
+                <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+              </div>
+            </form>
+
+            <p class="text-center">
+              <span>Forgot Password?</span>
+              <a href="{% url 'forget_password' %}"><span>Reset</span></a>
+            </p>
+          </div>
+        </div>
+        <!-- /Login -->
+      </div>
+    </div>
+  </div>
+{% endblock %}

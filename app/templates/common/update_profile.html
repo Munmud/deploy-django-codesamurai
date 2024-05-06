@@ -1,0 +1,62 @@
+{% extends layout_path %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Update Profile - Forms{% endblock %}
+
+{% block page_js %}
+{{ block.super }}
+<script src="{% static 'js/form-basic-inputs.js' %}"></script>
+{% endblock page_js %}
+
+
+{% block content %}
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Account /</span> Update Profile
+</h4>
+
+<div class="row justify-content-center">
+
+  <!-- Form controls -->
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <h5 class="card-header">Update Profile</h5>
+      <div class="card-body">
+
+            <form method="post">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <div class="mb-3">
+                <button class="btn btn-primary d-grid w-100" type="submit">Update</button>
+              </div>
+            </form>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+  <div class="content" style=" text-align: center; margin: 0 auto;">
+    <h2>Update Profile</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Update</button>
+    </form>
+  </br>
+    <h4>Assigned Roles</h4>
+
+    {% for group in groups %}
+      <p>{{ group.name }}</p>
+    {% endfor %}
+  </div>
+{% endblock %} {% endcomment %}
