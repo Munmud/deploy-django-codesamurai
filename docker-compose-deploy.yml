@@ -61,25 +61,26 @@ services:
     depends_on:
       - db
       - app
-  # celery_beat:
-  #   build:
-  #     context: .
-  #   command: >
-  #     sh -c "python manage.py wait_for_db &&
-  #     celery -A app beat -l INFO"
-  #   restart: always
-  #   volumes:
-  #     - static-data:/vol/web
-  #   environment:
-  #     - DB_HOST=db
-  #     - DB_NAME=${DB_NAME}
-  #     - DB_USER=${DB_USER}
-  #     - DB_PASS=${DB_PASS}
-  #     - SECRET_KEY=${SECRET_KEY}
-  #     - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-  #   depends_on:
-  #     - db
-  #     - app
+  celery_beat:
+    build:
+      context: .
+    command: >
+      sh -c "python manage.py wait_for_db &&
+      celery -A app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    restart: always
+    volumes:
+      - static-data:/vol/web
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    depends_on:
+      - db
+      - app
+      - celery
 
 
 volumes:
