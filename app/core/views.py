@@ -85,9 +85,6 @@ def dashboard(request):
             'fuel_cost_data_last7_days_values': fuel_cost_data_last7_days_values,
         })
 
-    context['is_navbar'] = False
-    print("context ---------", context)
-
     return render(request, 'common/dashboard.html', context)
 
 

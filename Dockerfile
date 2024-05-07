@@ -15,9 +15,12 @@ WORKDIR /app
 EXPOSE 8000
 
 RUN python -m venv /py && \
-    /py/bin/pip install --upgrade pip && \
-    /py/bin/pip install -r /requirements.txt && \
-    apk del .tmp-build-deps && \
+    /py/bin/pip install --upgrade pip
+
+RUN python -m venv /py && \
+    /py/bin/pip install -r /requirements.txt
+
+RUN apk del .tmp-build-deps && \
     adduser --disabled-password --no-create-home app
 
 RUN mkdir -p /vol/web/static && \

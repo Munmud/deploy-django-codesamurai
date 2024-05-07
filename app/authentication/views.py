@@ -56,9 +56,6 @@ def user_login(request):
     helper.add_input(Submit('submit', 'Login'))
 
     context = TemplateLayout.init(request, {'form': form, 'helper': helper})
-    context.update({
-        "layout_path": TemplateHelper.set_layout("layout_blank.html", context),
-    })
     return render(request, 'common/login.html', context)
 
 

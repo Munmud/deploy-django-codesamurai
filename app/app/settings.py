@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
     # internal apps
+    'notification',
     'core',
     'authentication',
     'waste',
@@ -179,9 +180,10 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Celery
-CELERY_BROKER_URL = 'amqp://guest:guest@broker:5672//'
-CELERY_RESULT_BACKEND = 'django_celery_results.backends.database:DatabaseBackend'
-CELERY_RESULT_EXTENDED = True
+CELERY_BROKER_URL = 'amqp://guest:guest@broker:5672/'
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+# CELERY_RESULT_BACKEND = 'django_celery_results.backends.database:DatabaseBackend'
+# CELERY_RESULT_EXTENDED = True
 CELERY_TIMEZONE = "Asia/Dhaka"
 
 # Email
@@ -199,3 +201,19 @@ GROUP_NAME_STS_MANAGER = 'STS Manager'
 GROUP_NAME_LANDFILL_MANAGER = 'Landfill Manager'
 FUEL_COST_PER_LITRE = 120
 PROD_WEB_URL = 'http://ec2-65-2-63-16.ap-south-1.compute.amazonaws.com'
+
+
+# # Notification
+# CHANNEL_LAYERS = {
+#     "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
+# }
+
+# Channels Configuration
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}

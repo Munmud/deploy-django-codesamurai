@@ -8,8 +8,13 @@ from authentication import views as auth_app
 from waste import views as waste_app
 from web_project.views import SystemView
 from core.views import dashboard, under_maintenance
+from notification.consumers import NotificationConsumer
+from notification import views as notification_app
+
 
 urlpatterns = [
+    path("notification", notification_app.notification_page_view,
+         name="notification_page"),
     path('admin/', admin.site.urls, name='admin_dashboard'),
     path('captcha/', include('captcha.urls')),
     path('under_maintenance', under_maintenance, name='under_maintenance'),
@@ -60,6 +65,10 @@ urlpatterns = [
 
     path('', dashboard, name='dashboard'),
 
+]
+
+websocket_urlpatterns = [
+    path("ws/notifications/", NotificationConsumer.as_asgi())
 ]
 
 
