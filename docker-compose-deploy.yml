@@ -38,6 +38,13 @@ services:
     volumes:
       - static-data:/vol/static
 
+
+  redis:
+    image: redis:7.0.11-alpine
+    # ports:
+    #   - 6379:6379
+    depends_on:
+      - broker
   broker:
     image: "rabbitmq:alpine"
     volumes:
