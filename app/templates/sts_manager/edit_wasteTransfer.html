@@ -1,4 +1,25 @@
-{% extends 'base.html' %} {% block content %}
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Edit Waste Transfer
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
   <div class="content" style=" text-align: center; margin: 0 auto;">
     <h1>Edit Waste Transfer</h1>
     <form method="post">

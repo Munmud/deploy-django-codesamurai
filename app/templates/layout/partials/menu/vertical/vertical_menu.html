@@ -1,3 +1,4 @@
+{% load poll_extras %}
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
   <!-- ! Hide app brand if navbar-full -->
   {% if not navbar_full %}
@@ -27,9 +28,27 @@
           </li>
         </ul>
       </li>
+      <!-- STS -->
+      {% if request.user|has_group:'STS Manager' %}
+        <li class="menu-item {% if 'auth' in request.path %}{% endif %}">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons user"></i>
+            <div class="text-truncate" data-i18n="Account Settings">Sts Management</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item {% if '/update_profile/' in request.path %}{% endif %}">
+              <a href="{% url 'waste_transfer_start' %}" class="menu-link"><div class="text-truncate" data-i18n="Update Profile">Transfer Waste</div></a>
+            </li>
+            <li class="menu-item {% if '/update_profile/' in request.path %}{% endif %}">
+              <a href="{% url 'create_fleet_step_1' %}" class="menu-link"><div class="text-truncate" data-i18n="Update Profile">Create Fleet</div></a>
+            </li>
+          </ul>
+        </li>
+      {% endif %}
+      <!-- / STS -->
 
       <!-- Account -->
-      <li class="menu-item {% if '/account_settings/' in request.path %}{% endif %}">
+      <li class="menu-item {% if 'auth' in request.path %}{% endif %}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-dock-top"></i>
           <div class="text-truncate" data-i18n="Account Settings">Account Settings</div>
@@ -40,6 +59,7 @@
           </li>
         </ul>
       </li>
+      <!-- / Account -->
     {% endif %}
     <!-- Auth -->
     <li class="menu-item open {% if '/auth/' in request.path %}{% endif %}">

@@ -24,6 +24,7 @@
       </li>
       {% endcomment %}
 
+      <!-- Notification -->
       <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
         <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
           <i class="bx bx-bell bx-sm"></i>
@@ -36,6 +37,8 @@
               <a href="javascript:void(0)" class="dropdown-notifications-all text-body" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Mark all as read" data-bs-original-title="Mark all as read"><i class="bx fs-4 bx-envelope-open"></i></a>
             </div>
           </li>
+
+          <!-- Notification Item -->
           <li class="dropdown-notifications-list scrollable-container ps">
             <ul class="list-group list-group-flush">
               <li class="list-group-item list-group-item-action dropdown-notifications-item">
@@ -82,11 +85,15 @@
               <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px"></div>
             </div>
           </li>
+          <!-- / Notification Item -->
+
           <li class="dropdown-menu-footer border-top p-3">
             <button class="btn btn-primary text-uppercase w-100">view all notifications</button>
           </li>
         </ul>
       </li>
+
+      <!-- / Notification -->
 
       <!-- User -->
       <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -146,3 +153,86 @@
     </ul>
   </div>
 </nav>
+
+{% comment %} {% if user.is_authenticated %}
+  <script>
+    function addNotification(name, message, timeAgo) {
+      // Find the notification list
+      var notificationList = document.querySelector('.dropdown-menu ul')
+      console.log(notificationList)
+    
+      // Create a list item for the new notification
+      var listItem = document.createElement('li')
+      listItem.classList.add('list-group-item', 'list-group-item-action', 'dropdown-notifications-item')
+    
+      // Construct the inner HTML for the notification
+      var innerHTML = `
+                    <div class="d-flex">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="avatar">
+                          <span class="avatar-initial rounded-circle bg-label-danger">${name.substring(0, 2)}</span>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <h6 class="mb-1">${name}</h6>
+                        <p class="mb-0">${message}</p>
+                        <small class="text-muted">${timeAgo}</small>
+                      </div>
+                      <div class="flex-shrink-0 dropdown-notifications-actions">
+                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="bx bx-x"></span></a>
+                      </div>
+                    </div>
+                  `
+    
+      // Set the inner HTML of the list item
+      listItem.innerHTML = innerHTML
+    
+      // Append the new notification to the list
+      notificationList.appendChild(listItem)
+    }
+    
+    const websocketProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+    const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/notifications/`
+    const socket = new WebSocket(wsEndpoint)
+    
+    // New event listener to capture incoming messages
+    socket.addEventListener('message', (event) => {
+      const messageData = JSON.parse(event.data)
+      console.log('Received notification:', messageData.message) // Log the received message to the console
+      showNotification(messageData.message)
+    })
+    
+    function showNotification(notificationHTML) {
+      const notificationsContainer = document.getElementById('notifications')
+    
+      // Create a new alert div
+      const alertDiv = document.createElement('div')
+      alertDiv.classList.add('alert', 'alert-dismissible', 'alert-primary', 'fade', 'show', 'mb-0')
+      alertDiv.setAttribute('role', 'alert')
+      alertDiv.innerHTML = notificationHTML
+    
+      // Create the close button
+      const closeButton = document.createElement('button')
+      closeButton.setAttribute('type', 'button')
+      closeButton.classList.add('btn-close')
+      closeButton.setAttribute('data-bs-dismiss', 'alert')
+      closeButton.setAttribute('aria-label', 'Close')
+      alertDiv.appendChild(closeButton)
+    
+      notificationsContainer.appendChild(alertDiv)
+    }
+    
+    socket.onopen = (event) => {
+      console.log(wsEndpoint)
+      console.log('WebSocket connection opened!')
+      // Example usage:
+      addNotification('Moontasir Mahmood', 'New message received', '5 minutes ago')
+      addNotification('Moontasir Mahmood', 'New message received', '5 minutes ago')
+    }
+    
+    socket.onclose = (event) => {
+      console.log('WebSocket connection closed!')
+    }
+  </script>
+{% endif %} {% endcomment %}

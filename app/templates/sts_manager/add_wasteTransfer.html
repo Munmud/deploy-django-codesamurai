@@ -1,7 +1,22 @@
-{% extends 'base.html' %}
+{% extends layout_path %}
 
-{% block head %}
+{% load static %}
+{% load i18n %}
 
+{% block title %}
+  Waste Transfer
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
 {% endblock %}
 
 {% block content %}
@@ -13,8 +28,4 @@
       <button type="submit">Next</button>
     </form>
   </div>
-{% endblock %}
-
-{% block js %}
-
 {% endblock %}

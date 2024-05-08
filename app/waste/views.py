@@ -4,12 +4,15 @@ from django.utils import timezone
 from django.contrib import messages
 from django.conf import settings
 
+
 import io
 from django.http import FileResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from web_project import TemplateLayout
+from web_project.template_helpers.theme import TemplateHelper
 
 from django.urls import reverse
 
@@ -102,7 +105,8 @@ def add_vehicle(request):
             return redirect('dashboard')
     else:
         form = VehicleForm()
-    return render(request, 'system_admin/add_vehicle.html', {'form': form})
+    context = TemplateLayout.init(request, {'form': form})
+    return render(request, 'system_admin/add_vehicle.html', context)
 
 
 @user_passes_test(is_sts_manager)
@@ -132,7 +136,8 @@ def waste_transfer_start(request):
 
     else:
         form = WasteTransferForm()
-    return render(request, 'sts_manager/add_wasteTransfer.html', {'form': form})
+    context = TemplateLayout.init(request, {'form': form})
+    return render(request, 'sts_manager/add_wasteTransfer.html', context)
 
 
 @user_passes_test(is_sts_manager)
@@ -161,13 +166,15 @@ def waste_transfer_start_complete(request):
 
     fastest_path = json.loads(Path.objects.get(
         sts=sts, landfill=landfill, OptimizeFor="FastestRoute").points)['PathList']
-    return render(request, 'sts_manager/add_wasteTransfer_complete.html', {
+
+    context = TemplateLayout.init(request, {
         'form': form,
         'shortest_path': shortest_path,
         'fastest_path': fastest_path,
         'sts': sts,
         'landfill': landfill,
     })
+    return render(request, 'sts_manager/add_wasteTransfer_complete.html', context)
 
 
 @user_passes_test(is_landfill_manager)
@@ -279,9 +286,10 @@ def create_fleet_step_1(request):
         return redirect(redirect_url)
     landfills = Landfill.objects.all()
 
-    return render(request, 'sts_manager/add_fleet_step1.html', {
+    context = TemplateLayout.init(request, {
         'landfills': landfills,
     })
+    return render(request, 'sts_manager/add_fleet_step1.html', context)
 
 
 @user_passes_test(is_sts_manager)
@@ -333,8 +341,8 @@ def create_fleet_step_2(request):
                 )
         messages.success(request, 'Added Fleet')
         return redirect('dashboard')
-
-    return render(request, 'sts_manager/add_fleet_step2.html', {
+    context = TemplateLayout.init(request, {
         'vehicles': vehicles,
         'recommend_selected_car': recommend_selected_car
     })
+    return render(request, 'sts_manager/add_fleet_step2.html', context)

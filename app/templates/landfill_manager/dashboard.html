@@ -1,529 +1,135 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
-  <div>
-    <h2 style=" text-align: center; margin: 0 auto;">{{ landfill }}</h2>
-    <canvas id="bigDashboardChart"></canvas>
-  </div>
-  <div class="content">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card card-chart">
-          <div class="card-header">
-            <h5 class="card-category">Last 7 Days</h5>
-            <h4 class="card-title">Fuel Cost</h4>
-          </div>
-          <div class="card-body">
-            <div class="chart-area">
-              <canvas id="lineChartExample"></canvas>
-            </div>
-          </div>
-          <div class="card-footer">
-            <div class="stats">
-              <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card card-chart">
-          <div class="card-header">
-            <h5 class="card-category">Last 7 Days</h5>
-            <h4 class="card-title">Garbage Transfer</h4>
-          </div>
-          <div class="card-body">
-            <div class="chart-area">
-              <canvas id="lineChartExampleWithNumbersAndGrid"></canvas>
-            </div>
-          </div>
-          <div class="card-footer">
-            <div class="stats">
-              <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+{% extends layout_path %}
 
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-category">Garbage</h5>
-            <h4 class="card-title">Ongoing Garbage Transfer</h4>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table">
-                <thead class="text-primary">
-                  <th>ID</th>
-                  <th>STS</th>
-                  <th>Vehicle</th>
-                  <th>Volume</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                  <th>Bill</th>
-                </thead>
-                <tbody>
-                  {% for transfer in waste_transfers %}
-                    <tr>
-                      <td>{{ transfer.id }}</td>
-                      <td>{{ transfer.sts }}</td>
-                      <td>{{ transfer.vehicle }}</td>
-                      <td>{{ transfer.volume }}</td>
-                      <td>{{ transfer.status }}</td>
-                      <td>
-                        {% if transfer.status == 'Sending to Landfill' %}
-                          <a href="{% url 'waste_transfer_start_dumping' transfer.id %}">Start Dumping Waste</a>
-                        {% elif transfer.status == 'Dumping in Landfill' %}
-                          <a href="{% url 'waste_transfer_end_dumping' transfer.id %}">End Dumping Waste</a>
-                        {% endif %}
-                      </td>
-                      <td>
-                        <a href="{% url 'waste_transfer_generate_bill' transfer.id %}">Download</a>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
 {% endblock %}
 
-{% block js %}
-  <script src="{% static 'assets\js\plugins\chartjs.min.js' %}"></script>
-  <!-- Now Ui Dashboard DEMO methods, don't include it in your project! -->
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
 
-  <script>
-demo = {
-  initPickColor: function () {
-    $(".pick-class-label").click(function () {
-      var new_class = $(this).attr("new-class");
-      var old_class = $("#display-buttons").attr("data-class");
-      var display_div = $("#display-buttons");
-      if (display_div.length) {
-        var display_buttons = display_div.find(".btn");
-        display_buttons.removeClass(old_class);
-        display_buttons.addClass(new_class);
-        display_div.attr("data-class", new_class);
-      }
-    });
-  },
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
 
-  initDocChart: function () {
-    chartColor = "#FFFFFF";
+{% block page_js %}
+  {{ block.super }}
+{% endblock %}
 
-    // General configuration for the charts with Line gradientStroke
-    gradientChartOptionsConfiguration = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        bodySpacing: 4,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest",
-        xPadding: 10,
-        yPadding: 10,
-        caretPadding: 10,
-      },
-      responsive: true,
-      scales: {
-        yAxes: [
-          {
-            display: 0,
-            gridLines: 0,
-            ticks: {
-              display: false,
-            },
-            gridLines: {
-              zeroLineColor: "transparent",
-              drawTicks: false,
-              display: false,
-              drawBorder: false,
-            },
-          },
-        ],
-        xAxes: [
-          {
-            display: 0,
-            gridLines: 0,
-            ticks: {
-              display: false,
-            },
-            gridLines: {
-              zeroLineColor: "transparent",
-              drawTicks: false,
-              display: false,
-              drawBorder: false,
-            },
-          },
-        ],
-      },
-      layout: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 15,
-          bottom: 15,
-        },
-      },
-    };
+{% block content %}
+  <div class="{{ container_class }}">
+    <!-- Heading -->
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <h2 class="mb-0">{{ landfill }}</h2>
+      </div>
+    </div>
+    <!-- / Heading -->
 
-    ctx = document.getElementById("lineChartExample").getContext("2d");
+    <br />
 
-    gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
-    gradientStroke.addColorStop(0, "#80b6f4");
-    gradientStroke.addColorStop(1, chartColor);
+    <!-- Basic Bootstrap Table -->
+    <div class="card">
+      <h5 class="card-header">Ongoing Garbage Transfer</h5>
+      <div class="table-responsive text-nowrap p-5">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>STS</th>
+              <th>Vehicle</th>
+              <th>Volume</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            {% for transfer in waste_transfers %}
+              <tr>
+                <td>
+                  <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ transfer.id }}</strong>
+                </td>
+                <td>{{ transfer.sts }}</td>
+                <td>{{ transfer.vehicle }}</td>
+                <td>{{ transfer.volume }}</td>
+                <td>{{ transfer.status }}</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- / Basic Bootstrap Table -->
 
-    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
-    gradientFill.addColorStop(1, "rgba(249, 99, 59, 0.40)");
-
-    myChart = new Chart(ctx, {
-      type: "line",
-      responsive: true,
-      data: {
-        labels: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-        datasets: [
-          {
-            label: "Active Users",
-            borderColor: "#f96332",
-            pointBorderColor: "#FFF",
-            pointBackgroundColor: "#f96332",
-            pointBorderWidth: 2,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 1,
-            pointRadius: 4,
-            fill: true,
-            backgroundColor: gradientFill,
-            borderWidth: 2,
-            data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 630],
-          },
-        ],
-      },
-      options: gradientChartOptionsConfiguration,
-    });
-  },
-
-  initDashboardPageCharts: function () {
-    chartColor = "#FFFFFF";
-
-    // General configuration for the charts with Line gradientStroke
-    gradientChartOptionsConfiguration = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        bodySpacing: 4,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest",
-        xPadding: 10,
-        yPadding: 10,
-        caretPadding: 10,
-      },
-      responsive: 1,
-      scales: {
-        yAxes: [
-          {
-            display: 0,
-            gridLines: 0,
-            ticks: {
-              display: false,
-            },
-            gridLines: {
-              zeroLineColor: "transparent",
-              drawTicks: false,
-              display: false,
-              drawBorder: false,
-            },
-          },
-        ],
-        xAxes: [
-          {
-            display: 0,
-            gridLines: 0,
-            ticks: {
-              display: false,
-            },
-            gridLines: {
-              zeroLineColor: "transparent",
-              drawTicks: false,
-              display: false,
-              drawBorder: false,
-            },
-          },
-        ],
-      },
-      layout: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 15,
-          bottom: 15,
-        },
-      },
-    };
-
-    gradientChartOptionsConfigurationWithNumbersAndGrid = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        bodySpacing: 4,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest",
-        xPadding: 10,
-        yPadding: 10,
-        caretPadding: 10,
-      },
-      responsive: true,
-      scales: {
-        yAxes: [
-          {
-            gridLines: 0,
-            gridLines: {
-              zeroLineColor: "transparent",
-              drawBorder: false,
-            },
-          },
-        ],
-        xAxes: [
-          {
-            display: 0,
-            gridLines: 0,
-            ticks: {
-              display: false,
-            },
-            gridLines: {
-              zeroLineColor: "transparent",
-              drawTicks: false,
-              display: false,
-              drawBorder: false,
-            },
-          },
-        ],
-      },
-      layout: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 15,
-          bottom: 15,
-        },
-      },
-    };
-
-    var ctx = document.getElementById("bigDashboardChart").getContext("2d");
-
-    var gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
-    gradientStroke.addColorStop(0, "#80b6f4");
-    gradientStroke.addColorStop(1, chartColor);
-
-    var gradientFill = ctx.createLinearGradient(0, 200, 0, 50);
-    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
-    gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
-
-
-
-    var cardStatsMiniLineColor = "#fff",
-      cardStatsMiniDotColor = "#fff";
-
-    ctx = document.getElementById("lineChartExample").getContext("2d");
-
-    gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
-    gradientStroke.addColorStop(0, "#80b6f4");
-    gradientStroke.addColorStop(1, chartColor);
-
-    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
-    gradientFill.addColorStop(1, "rgba(249, 99, 59, 0.40)");
-
-    myChart = new Chart(ctx, {
-      type: "line",
-      responsive: true,
-      data: {
-        labels: [{% for value in fuel_cost_data_last7_days_keys %}"{{value|date:"m"}}-{{value|date:"d"}}", {% endfor %}],
-        datasets: [
-          {
-            label: "Tk",
-            borderColor: "#f96332",
-            pointBorderColor: "#FFF",
-            pointBackgroundColor: "#f96332",
-            pointBorderWidth: 2,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 1,
-            pointRadius: 4,
-            fill: true,
-            backgroundColor: gradientFill,
-            borderWidth: 2,
-            data: [{% for value in fuel_cost_data_last7_days_values %}{{value}}, {% endfor %}],
-          },
-        ],
-      },
-      options: gradientChartOptionsConfiguration,
-    });
-
-    ctx = document
-      .getElementById("lineChartExampleWithNumbersAndGrid")
-      .getContext("2d");
-
-    gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
-    gradientStroke.addColorStop(0, "#18ce0f");
-    gradientStroke.addColorStop(1, chartColor);
-
-    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
-    gradientFill.addColorStop(1, hexToRGB("#18ce0f", 0.4));
-
-    myChart = new Chart(ctx, {
-      type: "line",
-      responsive: true,
-      data: { 
-        labels: [{% for value in volume_data_last7_days_values %}{{value|date:"Y-m-d H:i:s"}}, {% endfor %}],
-        datasets: [
-          {
-            label: "tons",
-            borderColor: "#18ce0f",
-            pointBorderColor: "#FFF",
-            pointBackgroundColor: "#18ce0f",
-            pointBorderWidth: 2,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 1,
-            pointRadius: 4,
-            fill: true,
-            backgroundColor: gradientFill,
-            borderWidth: 2,
-            data: [{% for value in volume_data_last7_days_values %}{{value}}, {% endfor %}],
-          },
-        ],
-      },
-      options: gradientChartOptionsConfigurationWithNumbersAndGrid,
-    });
-
-    var e = document
-      .getElementById("barChartSimpleGradientsNumbers")
-      .getContext("2d");
-
-    gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
-    gradientFill.addColorStop(1, hexToRGB("#2CA8FF", 0.6));
-
-    var a = {
-      type: "bar",
-      data: {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ],
-        datasets: [
-          {
-            label: "Active Countries",
-            backgroundColor: gradientFill,
-            borderColor: "#2CA8FF",
-            pointBorderColor: "#FFF",
-            pointBackgroundColor: "#2CA8FF",
-            pointBorderWidth: 2,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 1,
-            pointRadius: 4,
-            fill: true,
-            borderWidth: 1,
-            data: [80, 99, 86, 96, 123, 85, 100, 75, 88, 90, 123, 155],
-          },
-        ],
-      },
-      options: {
-        maintainAspectRatio: false,
-        legend: {
-          display: false,
-        },
-        tooltips: {
-          bodySpacing: 4,
-          mode: "nearest",
-          intersect: 0,
-          position: "nearest",
-          xPadding: 10,
-          yPadding: 10,
-          caretPadding: 10,
-        },
-        responsive: 1,
-        scales: {
-          yAxes: [
-            {
-              gridLines: 0,
-              gridLines: {
-                zeroLineColor: "transparent",
-                drawBorder: false,
-              },
-            },
-          ],
-          xAxes: [
-            {
-              display: 0,
-              gridLines: 0,
-              ticks: {
-                display: false,
-              },
-              gridLines: {
-                zeroLineColor: "transparent",
-                drawTicks: false,
-                display: false,
-                drawBorder: false,
-              },
-            },
-          ],
-        },
-        layout: {
-          padding: {
-            left: 0,
-            right: 0,
-            top: 15,
-            bottom: 15,
-          },
-        },
-      },
-    };
-
-    var viewsChart = new Chart(e, a);
-  },
-};
-    $(document).ready(function () {
-      // Javascript method's body can be found in assets/js/demos.js
-      demo.initDashboardPageCharts();
-
-    });
-  </script>
+    <!-- Activity Timeline -->
+    {% comment %} <div class="card">
+      <div class="card-body">
+        <ul class="timeline">
+          <li class="timeline-item timeline-item-transparent">
+            <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+            <div class="timeline-event">
+              <div class="timeline-header mb-1">
+                <h6 class="mb-0">Client Meeting</h6>
+                <small class="text-muted">45 min ago</small>
+              </div>
+              <p class="mb-2">Project meeting with john @10:15am</p>
+              <div class="d-flex flex-wrap">
+                <div class="avatar me-3">
+                  <img src="{% static 'assets/img/avatars/1.png' %}" alt="Avatar" class="rounded-circle" />
+                </div>
+                <div>
+                  <h6 class="mb-0">Lester McCarthy (Client)</h6>
+                  <span>CEO of ThemeSelection</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="timeline-item timeline-item-transparent">
+            <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-info"></span></span>
+            <div class="timeline-event pb-0">
+              <div class="timeline-header mb-1">
+                <h6 class="mb-0">Create a new project for client</h6>
+                <small class="text-muted">2 Day Ago</small>
+              </div>
+              <p class="mb-2">5 team members in a project</p>
+              <div class="d-flex align-items-center avatar-group">
+                <div class="avatar pull-up" data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" aria-label="Vinnie Mostowy" data-bs-original-title="Vinnie Mostowy">
+                  <img src="../../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" />
+                </div>
+                <div class="avatar pull-up" data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" aria-label="Marrie Patty" data-bs-original-title="Marrie Patty">
+                  <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle" />
+                </div>
+                <div class="avatar pull-up" data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" aria-label="Jimmy Jackson" data-bs-original-title="Jimmy Jackson">
+                  <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle" />
+                </div>
+                <div class="avatar pull-up" data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" aria-label="Kristine Gill" data-bs-original-title="Kristine Gill">
+                  <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" />
+                </div>
+                <div class="avatar pull-up" data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" aria-label="Nelson Wilson" data-bs-original-title="Nelson Wilson">
+                  <img src="../../assets/img/avatars/14.png" alt="Avatar" class="rounded-circle" />
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="timeline-end-indicator">
+            <i class="bx bx-check-circle"></i>
+          </li>
+        </ul>
+        <!-- /Activity Timeline -->
+      </div>
+    </div> {% endcomment %}
+    <!-- / Activity Timeline -->
+  </div>
 {% endblock %}

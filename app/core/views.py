@@ -57,7 +57,8 @@ def dashboard(request):
 
         fuel_cost_data_last7_days_keys, fuel_cost_data_last7_days_values = sts_manager_generate_waste_transfer_fuel_cost_data_last_7_days(
             sts)
-        return render(request, 'sts_manager/dashboard.html', {
+
+        context.update({
             'sts': sts,
             'waste_transfers': waste_transfers,
             'volume_data_last7_days_keys': volume_data_last7_days_keys,
@@ -65,6 +66,7 @@ def dashboard(request):
             'fuel_cost_data_last7_days_keys': fuel_cost_data_last7_days_keys,
             'fuel_cost_data_last7_days_values': fuel_cost_data_last7_days_values,
         })
+        return render(request, 'sts_manager/dashboard.html', context)
 
     elif is_landfill_manager(request.user):
         landfill = LandfillManager.objects.get(user=request.user).landfill
@@ -76,7 +78,8 @@ def dashboard(request):
 
         fuel_cost_data_last7_days_keys, fuel_cost_data_last7_days_values = landfill_manager_generate_waste_transfer_fuel_cost_data_last_7_days(
             landfill)
-        return render(request, 'landfill_manager/dashboard.html', {
+
+        context.update({
             'landfill': landfill,
             'waste_transfers': waste_transfers,
             'volume_data_last7_days_keys': volume_data_last7_days_keys,
@@ -84,6 +87,7 @@ def dashboard(request):
             'fuel_cost_data_last7_days_keys': fuel_cost_data_last7_days_keys,
             'fuel_cost_data_last7_days_values': fuel_cost_data_last7_days_values,
         })
+        return render(request, 'landfill_manager/dashboard.html', context)
 
     return render(request, 'common/dashboard.html', context)
 
