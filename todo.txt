@@ -1,6 +1,5 @@
 High Priority
 ------------------------
-Add Activity Timeline (Partially implemented in landfill dashboard)
 
 
 Mediam priority
@@ -16,8 +15,8 @@ Analytics : How many incoming and outgoing vehicle
 Analytics : Finished Transfer count
 Analytics : Ongoing Transfer count
 Add line path in map
-Update form for sts
-Update form for landfill
+Update form form of sts
+Update form form of landfill
 
 Idea
 ----------
