@@ -99,6 +99,14 @@ def waste_transfer_generate_bill(request, transfer_id):
     return FileResponse(buf, as_attachment=True, filename=f'trasnfer_{transfer.id}.pdf')
 
 
+def waste_transfer_details(request, transfer_id):
+    transfer = WasteTransfer.objects.get(id=transfer_id)
+    context = TemplateLayout.init(request, {
+        'transfer': transfer
+    })
+    return render(request, 'common/transfer_details.html', context)
+
+
 @user_passes_test(is_system_admin)
 def add_vehicle(request):
     if request.method == 'POST':

@@ -1,0 +1,98 @@
+{% extends layout_path %}
+{% load poll_extras %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Transfer Details
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+  {% comment %} <script src="{% static 'js/form-basic-inputs.js' %}"></script> {% endcomment %}
+{% endblock %}
+
+{% block content %}
+  <!-- Activity Timeline -->
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <div class="row">
+        <h4 class="card-title m-0 me-2 p-3">Transfer Id: {{ transfer.id }}</h4>
+        <h6>Vehicle : {{ transfer.vehicle.vehicle_number }}</h6>
+        <h6>Transfer Amount: {{ transfer.volume }} tons</h6>
+      </div>
+
+      <div class="dropdown">
+        <button class="btn p-0" type="button" id="timelineWapper" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bx bx-dots-vertical-rounded"></i></button>
+        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="timelineWapper">
+          {% if request.user|has_group:'STS Manager' %}
+            <a class="dropdown-item" href="{% url 'waste_transfer_complete' transfer.id %}">Vehicle Returned</a>
+          {% endif %}
+          {% if request.user|has_group:'Landfill Manager' %}
+            {% if transfer.status == 'Sending to Landfill' %}
+              <a class="dropdown-item" href="{% url 'waste_transfer_start_dumping' transfer.id %}">Start Dumping Waste</a>
+            {% elif transfer.status == 'Dumping in Landfill' %}
+              <a class="dropdown-item" href="{% url 'waste_transfer_end_dumping' transfer.id %}">End Dumping Waste</a>
+            {% endif %}
+          {% endif %}
+
+          <a class="dropdown-item" href="{% url 'waste_transfer_generate_bill' transfer.id %}">Download Bill</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <ul class="timeline">
+        {% if transfer.arrival_at_sts %}
+          <li class="timeline-item timeline-item-transparent">
+            <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+            <div class="timeline-event">
+              <div class="timeline-header mb-1">
+                <h6 class="mb-0">Arrival at {{ transfer.sts }}</h6>
+                <small class="text-muted">{{ transfer.arrival_at_sts }}</small>
+              </div>
+            </div>
+          </li>
+        {% endif %}
+        <br />
+        {% if transfer.departure_from_landfill %}
+          <li class="timeline-item timeline-item-transparent">
+            <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+            <div class="timeline-event">
+              <div class="timeline-header mb-1">
+                <h6 class="mb-0">Departure from {{ transfer.landfill }}</h6>
+                <small class="text-muted">{{ transfer.departure_from_landfill }}</small>
+              </div>
+            </div>
+          </li>
+        {% endif %}
+        <br />
+        {% if transfer.arrival_at_landfill %}
+          <li class="timeline-item timeline-item-transparent">
+            <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+            <div class="timeline-event">
+              <div class="timeline-header mb-1">
+                <h6 class="mb-0">Arrived at {{ transfer.landfill }}</h6>
+                <small class="text-muted">{{ transfer.arrival_at_landfill }}</small>
+              </div>
+            </div>
+          </li>
+        {% endif %}
+        <br />
+        <li class="timeline-item timeline-item-transparent">
+          <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+          <div class="timeline-event">
+            <div class="timeline-header mb-1">
+              <h6 class="mb-0">Departure from {{ transfer.sts }}</h6>
+              <small class="text-muted">{{ transfer.departure_from_sts }}</small>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <!-- /Activity Timeline -->
+    </div>
+  </div>
+  <!-- / Activity Timeline -->
+{% endblock %}

@@ -66,6 +66,10 @@ urlpatterns = [
     #     path('sts_manager/transfer_waste/edit/<int:transfer_id>',
     #          waste_app.edit_waste_transfer, name="edit_waste_transfer"),
 
+    # common waste_transfer_details
+    path('waste_transfer/<int:transfer_id>',
+         waste_app.waste_transfer_details, name="waste_transfer_details"),
+
 
     path('', dashboard, name='dashboard'),
 
