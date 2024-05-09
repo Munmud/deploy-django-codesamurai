@@ -13,11 +13,15 @@ from notification import views as notification_app
 
 
 urlpatterns = [
-    path("notification", notification_app.notification_page_view,
-         name="notification_page"),
+    #     path("notification", notification_app.notification_page_view,
+    #          name="notification_page"),
     path('admin/', admin.site.urls, name='admin_dashboard'),
     path('captcha/', include('captcha.urls')),
     path('under_maintenance', under_maintenance, name='under_maintenance'),
+
+    # notification
+    path('/view_all_notification', notification_app.read_all_notification,
+         name="read_all_notification"),
 
     # auth
     path('auth/login', auth_app.user_login, name='login'),

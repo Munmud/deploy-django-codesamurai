@@ -12,6 +12,7 @@ class Notification(models.Model):
 
 
 class NotificationBase(models.Model):
+    title = models.TextField()
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)

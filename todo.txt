@@ -13,6 +13,9 @@ Use paginator to show previous list of transfer
 
 Low Priority
 ---------------------------
+Analytics : How many incoming and outgoing vehicle
+Analytics : Finished Transfer count
+Analytics : Ongoing Transfer count
 Add line path in map
 Update form for sts
 Update form for landfill

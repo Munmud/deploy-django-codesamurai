@@ -11,6 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from web_project import TemplateLayout
 from web_project.template_helpers.theme import TemplateHelper
 
+from notification.utils import add_notification
 from waste.models import *
 from .utils import is_sts_manager, is_system_admin, is_landfill_manager
 from .utils import aws_map_route_api
@@ -45,6 +46,7 @@ def dashboard(request):
             'fuel_cost_data_last7_days_keys': fuel_cost_data_last7_days_keys,
             'fuel_cost_data_last7_days_values': fuel_cost_data_last7_days_values,
         })
+        add_notification(request.user, context)
         return render(request, 'system_admin/dashboard.html', context)
 
     elif is_sts_manager(request.user):
@@ -66,6 +68,7 @@ def dashboard(request):
             'fuel_cost_data_last7_days_keys': fuel_cost_data_last7_days_keys,
             'fuel_cost_data_last7_days_values': fuel_cost_data_last7_days_values,
         })
+        add_notification(request.user, context)
         return render(request, 'sts_manager/dashboard.html', context)
 
     elif is_landfill_manager(request.user):
@@ -87,6 +90,7 @@ def dashboard(request):
             'fuel_cost_data_last7_days_keys': fuel_cost_data_last7_days_keys,
             'fuel_cost_data_last7_days_values': fuel_cost_data_last7_days_values,
         })
+        add_notification(request.user, context)
         return render(request, 'landfill_manager/dashboard.html', context)
 
     return render(request, 'common/dashboard.html', context)

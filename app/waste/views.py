@@ -13,6 +13,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from web_project import TemplateLayout
 from web_project.template_helpers.theme import TemplateHelper
+from notification.tasks import (
+    send_notification_to_sts_manager,
+    send_notification_to_landfill_manager,
+)
 
 from django.urls import reverse
 
@@ -154,9 +158,17 @@ def waste_transfer_start_complete(request):
             path = form.cleaned_data['path']
             new_transfer = WasteTransfer(
                 sts=sts, landfill=landfill, vehicle=vehicle, volume=volume, path=path)
+
             new_transfer.status = 'Sending to Landfill'
             new_transfer.departure_from_sts = timezone.now()
             new_transfer.save()
+
+            send_notification_to_landfill_manager.delay(
+                landfill.id,
+                f"Incoming Waste",
+                f'Transfer {new_transfer.id}\nFrom:{sts}\nAmount: {new_transfer.volume} tons'
+            )
+
             messages.success(request, f"Sent new Transfer to {landfill}")
             return redirect('dashboard')
 
@@ -192,6 +204,13 @@ def waste_transfer_end_dumping(request, transfer_id):
     transfer.departure_from_landfill = timezone.now()
     transfer.status = 'Returning to STS'
     transfer.save()
+
+    send_notification_to_sts_manager.delay(
+        transfer.sts.id,
+        f"Returning Vehicle",
+        f'Transfer {transfer.id} \n From: {transfer.landfill}\nVehicle : {transfer.vehicle}'
+    )
+
     return redirect('dashboard')
 
 

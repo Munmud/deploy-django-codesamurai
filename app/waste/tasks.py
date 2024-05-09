@@ -5,6 +5,8 @@ from django.conf import settings
 from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from django.db import transaction
+
+from notification.tasks import send_notification_to_landfill_manager
 from .models import WasteTransferQueue, WasteTransfer
 
 
@@ -29,6 +31,13 @@ def queue_to_waste_transfer():
             new_transfer.status = 'Sending to Landfill'
             new_transfer.departure_from_sts = timezone.now()
             new_transfer.save()
+
+            send_notification_to_landfill_manager.delay(
+                transfer.landfill.id,
+                f"Incoming Waste",
+                f'Transfer {new_transfer.id}\nFrom:{transfer.sts}\nAmount: {new_transfer.volume} tons'
+            )
+
             transfer.status = 'Completed'
             transfer.save()
 
