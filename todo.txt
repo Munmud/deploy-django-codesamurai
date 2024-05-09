@@ -1,7 +1,25 @@
-Profile pic Upload
-Update form for sts
-Update form for landfill
+High Priority
+------------------------
 Notificaton features
+Implement ML
+
+
+Mediam priority
+---------------------------
+Profile pic Upload By a user (Update Profile Section)
 Add Activity Timeline (Partially implemented in landfill dashboard)
 Use paginator to show previous list of transfer
 
+
+Low Priority
+---------------------------
+Add line path in map
+Update form for sts
+Update form for landfill
+
+Idea
+----------
+Waste Collection Scheduling
+Waste Tracking and Monitoring
+Customer Support and Communication
+Regulatory Compliance: Ensure compliance with local regulations and standards for waste management.
