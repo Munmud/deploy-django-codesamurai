@@ -1,5 +1,11 @@
 from django import forms
-from .models import Vehicle, WasteTransfer, Path, Workforce_WorkHours, Workforce
+from .models import Vehicle, WasteTransfer, Path, Workforce_WorkHours, Workforce, WasteTransferToSts
+
+
+class AddWasteForm(forms.ModelForm):
+    class Meta:
+        model = WasteTransferToSts
+        fields = ['volume']
 
 
 class WorkforceWorkHoursForm(forms.ModelForm):

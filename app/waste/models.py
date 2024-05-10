@@ -395,6 +395,19 @@ class Workforce_WorkHours(models.Model):
         unique_together = ['workforce', 'date']
 
 
+@receiver(models.signals.post_save, sender=Workforce_WorkHours)
+def send_waste_to_sts(sender, instance, created, **kwargs):
+    if created:
+        WasteTransferToSts.objects.create(workforce_log=instance)
+
+
+class WasteTransferToSts(models.Model):
+    workforce_log = models.ForeignKey(
+        Workforce_WorkHours, on_delete=models.CASCADE)
+    volume = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+
+
 @receiver(models.signals.post_save, sender=Workforce)
 def create_contractor_manager(sender, instance, created, **kwargs):
     if created:

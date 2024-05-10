@@ -1,0 +1,68 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  <!-- Basic Bootstrap Table -->
+  <div class="card">
+    <h5 class="card-header">Work Hours Table</h5>
+    <div class="table-responsive text-nowrap p-5">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>User</th>
+            <th>Login Time</th>
+            <th>Logout Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for work_hour in work_hours %}
+            <tr>
+              <td>{{ work_hour.date }}</td>
+              <td>{{ work_hour.workforce.user.username }}</td>
+              <td>{{ work_hour.login_time }}</td>
+              <td>{{ work_hour.logout_time }}</td>
+              <td>{{ work_hour.duration }}</td>
+              {% comment %}
+              <td>
+                <div class="dropdown">
+                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'waste_transfer_details' transfer.id %}"><i class="bx bx-edit-alt me-1"></i>View Details</a>
+                    {% if transfer.status == 'Sending to Landfill' %}
+                      <a class="dropdown-item" href="{% url 'waste_transfer_start_dumping' transfer.id %}"><i class="bx bx-edit-alt me-1"></i> Start Dumping Waste</a>
+                    {% elif transfer.status == 'Dumping in Landfill' %}
+                      <a class="dropdown-item" href="{% url 'waste_transfer_end_dumping' transfer.id %}"><i class="bx bx-edit-alt me-1"></i> End Dumping Waste</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="{% url 'waste_transfer_generate_bill' transfer.id %}"><i class="bx bx-edit-alt me-1"></i> Download Bill</a>
+                  </div>
+                </div>
+              </td>
+              {% endcomment %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- / Basic Bootstrap Table -->
+{% endblock %}

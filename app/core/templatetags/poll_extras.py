@@ -8,3 +8,14 @@ register = template.Library()
 def has_group(user, group_name):
     group = Group.objects.get(name=group_name)
     return True if group in user.groups.all() else False
+
+
+@register.filter
+def calculate_duration(login_time, logout_time):
+    if login_time and logout_time:
+        duration = logout_time - login_time
+        hours, remainder = divmod(duration.seconds, 3600)
+        minutes, _ = divmod(remainder, 60)
+        return f"{hours} hours, {minutes} minutes"
+    else:
+        return "N/A"

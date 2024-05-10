@@ -1,0 +1,62 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  <!-- Basic Bootstrap Table -->
+  <div class="card">
+    <h5 class="card-header">Work Hours Table</h5>
+    <div class="table-responsive text-nowrap p-5">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>User</th>
+            <th>Login Time</th>
+            <th>Logout Time</th>
+            <th>Duration</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for transfer in transfers %}
+            <tr>
+              <td>{{ transfer.workforce_log.date }}</td>
+              <td>{{ transfer.workforce_log.workforce.user.username }}</td>
+              <td>{{ transfer.workforce_log.login_time }}</td>
+              <td>{{ transfer.workforce_log.logout_time }}</td>
+              <td>{{ transfer.workforce_log.duration }}</td>
+
+              <td>
+                <div class="dropdown">
+                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'add_waste' transfer.id %}"><i class="bx bx-edit-alt me-1"></i>Add volumes</a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- / Basic Bootstrap Table -->
+{% endblock %}

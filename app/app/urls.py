@@ -26,6 +26,8 @@ urlpatterns = [
     # contract_manager
     path('workforce_registration/', waste_app.workforce_registration,
          name="workforce_registration"),
+    path('workforce_work_hours/', waste_app.workforce_work_hours,
+         name="workforce_work_hours"),
 
 
     # notification
@@ -47,9 +49,16 @@ urlpatterns = [
     # Ststem Admin
     #     path('system_admin/add_vehicle/', waste_app.add_vehicle, name="add_vehicle"),
 
-    # STS Manager
+    # STS Manager add_waste
+    path('sts_manager/waste_transfer/<int:pk>',
+         waste_app.add_waste, name="add_waste"),
+
     path('sts_manager/transfer_waste/start',
          waste_app.waste_transfer_start, name="waste_transfer_start"),
+
+    path('sts_manager/sts_add_new_waste',
+         waste_app.sts_add_new_waste, name="sts_add_new_waste"),
+
 
     path('sts_manager/transfer_waste/start_complete',
          waste_app.waste_transfer_start_complete, name="waste_transfer_start_complete"),

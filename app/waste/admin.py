@@ -103,3 +103,11 @@ class Workforce_WorkHoursAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Workforce_WorkHours, Workforce_WorkHoursAdmin)
+
+
+class WasteTransferToStsAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in WasteTransferToSts._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(WasteTransferToSts, WasteTransferToStsAdmin)

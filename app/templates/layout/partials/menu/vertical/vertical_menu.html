@@ -44,17 +44,32 @@
             </li>
           </ul>
         </li>
+
+        <li class="menu-item {% if 'auth' in request.path %}{% endif %}">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons user"></i>
+            <div class="text-truncate" data-i18n="Account Settings">Workforce Management</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item {% if '/update_profile/' in request.path %}{% endif %}">
+              <a href="{% url 'sts_add_new_waste' %}" class="menu-link"><div class="text-truncate" data-i18n="Update Profile">Add waste</div></a>
+            </li>
+          </ul>
+        </li>
       {% endif %}
 
       {% if request.user|has_group:'Contractor Manager' %}
         <li class="menu-item {% if 'auth' in request.path %}{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons user"></i>
-            <div class="text-truncate" data-i18n="Account Settings">Workforce</div>
+            <div class="text-truncate" data-i18n="Account Settings">Workforce Management</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item {% if '/update_profile/' in request.path %}{% endif %}">
               <a href="{% url 'workforce_registration' %}" class="menu-link"><div class="text-truncate" data-i18n="Update Profile">Create New Workforce</div></a>
+            </li>
+            <li class="menu-item {% if '/update_profile/' in request.path %}{% endif %}">
+              <a href="{% url 'workforce_work_hours' %}" class="menu-link"><div class="text-truncate" data-i18n="Update Profile">Workforce Workhour</div></a>
             </li>
           </ul>
         </li>

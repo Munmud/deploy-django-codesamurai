@@ -23,10 +23,75 @@ from django.urls import reverse
 from core.utils import (
     is_system_admin,
     is_sts_manager,
-    is_landfill_manager
+    is_landfill_manager,
+    is_contractor_manager,
+    is_workforce,
+    is_citizen
 )
 from .forms import *
 from .models import *
+
+from django.db.models import OuterRef, Subquery
+
+
+@user_passes_test(is_sts_manager)
+def sts_add_new_waste(request):
+    context = TemplateLayout.init(request, {})
+
+    transfers = WasteTransferToSts.objects.filter(volume__isnull=True).all()
+
+    # workforce_workhours_related_to_waste_transfers = Workforce_WorkHours.objects.filter(
+    #     wastetransfertosts__volume__isnull=True
+    # )
+
+    # # Fetch the queryset
+    # workforce_without_volumes = workforce_workhours_related_to_waste_transfers.all()
+
+    # # Fetch the queryset
+    # work_hours = workforce_without_volumes.order_by('-date').all()
+    for transfer in transfers:
+        # Calculate duration of work for each entry
+        transfer.workforce_log.duration = transfer.workforce_log.logout_time - \
+            transfer.workforce_log.login_time
+
+    context.update({'transfers': transfers})
+    return render(request, 'sts_manager/add_waste_table.html', context)
+
+
+@user_passes_test(is_sts_manager)
+def add_waste(request, pk):
+    context = TemplateLayout.init(request, {})
+    waste_transfer = WasteTransferToSts.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = AddWasteForm(request.POST)
+        if form.is_valid():
+            volume = form.cleaned_data['volume']
+            waste_transfer.volume = volume
+            waste_transfer.save()
+            messages.success(
+                request, f'Added Waste successfully')
+            return redirect('sts_add_new_waste')  # Redirect to a success page
+    else:
+        form = AddWasteForm()
+    context.update({'form': form})
+    return render(request, 'sts_manager/add_waste.html', context)
+
+
+@user_passes_test(is_contractor_manager)
+def workforce_work_hours(request):
+    context = TemplateLayout.init(request, {})
+    contractor = ContractorManager.objects.get(user=request.user).contractor
+    workforces = Workforce.objects.filter(contractor=contractor).all()
+    # for workforce in workforces
+    work_hours = Workforce_WorkHours.objects.filter(workforce__in=workforces).order_by(
+        '-date')
+    # Query work hours in descending order of date
+    for work_hour in work_hours:
+        # Calculate duration of work for each entry
+        work_hour.duration = work_hour.logout_time - work_hour.login_time
+
+    context.update({'work_hours': work_hours})
+    return render(request, 'contractor_manager/workforce_workhour.html', context)
 
 
 def add_workforce_work_hours(request):
