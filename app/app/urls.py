@@ -19,6 +19,15 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),
     path('under_maintenance', under_maintenance, name='under_maintenance'),
 
+    # workforce add_workforce_work_hours
+    path('add_workforce_work_hours/', waste_app.add_workforce_work_hours,
+         name="add_workforce_work_hours"),
+
+    # contract_manager
+    path('workforce_registration/', waste_app.workforce_registration,
+         name="workforce_registration"),
+
+
     # notification
     path('view_all_notification', notification_app.read_all_notification,
          name="read_all_notification"),

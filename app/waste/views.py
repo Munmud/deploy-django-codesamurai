@@ -29,6 +29,69 @@ from .forms import *
 from .models import *
 
 
+def add_workforce_work_hours(request):
+    context = TemplateLayout.init(request, {})
+    if request.method == 'POST':
+        form = WorkforceWorkHoursForm(request.user, request.POST)
+        print(f"form = {form.data}")
+        if form.is_valid():
+            form.save()
+            # Redirect to a success page or wherever you want
+            messages.success(
+                request, f'Workforce entry added')
+            return redirect('dashboard')
+    else:
+        form = WorkforceWorkHoursForm(request.user)
+    context.update({'form': form})
+    return render(request, 'workforce/dailycheckin.html', context)
+
+
+def workforce_registration(request):
+    context = TemplateLayout.init(request, {})
+    if request.method == 'POST':
+        form = WorkforceRegistrationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+            job_title = form.cleaned_data['job_title']
+            payment_rate_per_hour = form.cleaned_data['payment_rate_per_hour']
+            # Check if the user already exists
+            if not User.objects.filter(email=email).exists():
+                contractor_manager = request.user
+                contractor = ContractorManager.objects.get(
+                    user=contractor_manager).contractor
+                # Create the user with email as username
+                user = User.objects.create_user(
+                    email,
+                    email=email,
+                    password=email
+                )
+                # Optionally, you can set other user attributes here
+                user.save()
+
+                Workforce.objects.create(
+                    start_date=start_date,
+                    end_date=end_date,
+                    job_title=job_title,
+                    payment_rate_per_hour=payment_rate_per_hour,
+                    user=user,
+                    contractor=contractor
+                )
+
+                messages.success(
+                    request, f'Registration successful\nusername is {email}\npassword is {email}')
+                return redirect('dashboard')  # Redirect to a success page
+            else:
+                messages.error(request, 'User already exists')
+                context.update({'form': form})
+                return render(request, 'contractor_manager/workforce_registration.html', context)
+    else:
+        form = WorkforceRegistrationForm()
+    context.update({'form': form})
+    return render(request, 'contractor_manager/workforce_registration.html', context)
+
+
 def waste_transfer_generate_bill(request, transfer_id):
     transfer = WasteTransfer.objects.get(id=transfer_id)
     buf = io.BytesIO()

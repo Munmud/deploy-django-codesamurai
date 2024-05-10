@@ -367,18 +367,32 @@ def delete_contractor_manager(sender, instance, **kwargs):
     user.groups.remove(group)
 
 
-class Contract_Workforce(models.Model):
+class Workforce(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     job_title = models.CharField(max_length=100)
     payment_rate_per_hour = models.DecimalField(
         max_digits=10, decimal_places=2)
-    contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE)
-
-
-class Workforce(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    contract = models.ForeignKey(Contract_Workforce, on_delete=models.CASCADE)
+    contractor = models.ForeignKey(
+        Contractor, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['user',]
+
+    def __str__(self):
+        return f"{self.user.username}"
+
+
+class Workforce_WorkHours(models.Model):
+    workforce = models.ForeignKey(Workforce, on_delete=models.CASCADE)
+    # Automatically add the current date
+    date = models.DateField(auto_now_add=True)
+    login_time = models.DateTimeField()
+    logout_time = models.DateTimeField()
+
+    class Meta:
+        unique_together = ['workforce', 'date']
 
 
 @receiver(models.signals.post_save, sender=Workforce)

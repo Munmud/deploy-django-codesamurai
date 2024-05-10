@@ -5,6 +5,7 @@ addition of a garbage collector user role
 addition of a citizen user role
 registration of a 3rd party contractor
 Creation of Contractor Manager User
+Registration of workforce can be done by contractor manager
 
 
 High Priority
@@ -20,13 +21,11 @@ monitoring and logging working hours and collected waste
 daily bill generation, 
 optimizing collection routes
 scheduling collection
-Registration of workforce can be done by contractor manager
 track the working hours by contractor managers
 the STS manager will add an entry every time the STS receives a load from a third-party contractor
 STS manager will print a slip for each third-party contractor at the end of each workday.
 The STS manager will calculate fines when a contractor fails to deposit the required amount of waste to the STS
-When creating or updating STS, a new
-fine for the compensation parameter will be added to the STS configuration
+When creating or updating STS, a new fine for the compensation parameter will be added to the STS configuration
 When creating or updating STS, a new fine for the compensation parameter will be added to the STS configuration.The unit will be fine in Taka based on the tons of waste that are missing.
 application can suggest a schedule for collecting waste to the STS for sts manager
 Domestic Waste Collection monitor by sts manager

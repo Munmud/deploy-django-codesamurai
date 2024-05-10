@@ -13,7 +13,14 @@ from web_project.template_helpers.theme import TemplateHelper
 
 from notification.utils import add_notification
 from waste.models import *
-from .utils import is_sts_manager, is_system_admin, is_landfill_manager
+from .utils import (
+    is_sts_manager,
+    is_system_admin,
+    is_landfill_manager,
+    is_contractor_manager,
+    is_workforce,
+    is_citizen
+)
 from .utils import aws_map_route_api
 from report.views import (
     admin_generate_waste_transfer_volume_data_last_7_days,
@@ -92,6 +99,10 @@ def dashboard(request):
         })
         add_notification(request.user, context)
         return render(request, 'landfill_manager/dashboard.html', context)
+
+    elif is_contractor_manager(request.user):
+        add_notification(request.user, context)
+        return render(request, 'contractor_manager/dashboard.html', context)
 
     return render(request, 'common/dashboard.html', context)
 

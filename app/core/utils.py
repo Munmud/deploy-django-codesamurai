@@ -35,6 +35,18 @@ def is_landfill_manager(user):
     return user.groups.filter(name=settings.GROUP_NAME_LANDFILL_MANAGER).exists()
 
 
+def is_contractor_manager(user):
+    return user.groups.filter(name=settings.GROUP_NAME_CONTRACTOR_MANAGER).exists()
+
+
+def is_workforce(user):
+    return user.groups.filter(name=settings.GROUP_NAME_WORKFORCE).exists()
+
+
+def is_citizen(user):
+    return user.groups.filter(name=settings.GROUP_NAME_CITIZEN).exists()
+
+
 def load_sts():
     dataset = []
     with open(STS_METADATA_CSV, newline='', encoding="utf8") as csvfile:

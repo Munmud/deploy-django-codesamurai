@@ -213,19 +213,13 @@ class Command(BaseCommand):
         create_contractor_manager(
             self, contractor_instance, User.objects.get(username=USER_Contractor))
 
-        contract_workforce_instance = Contract_Workforce.objects.create(
+        workforce_instance = Workforce.objects.create(
             start_date=date(2024, 2, 2),
             end_date=date(2024, 12, 31),
             job_title="Van Garbage Collector",
             payment_rate_per_hour=50.00,
-            contractor=contractor_instance
-        )
-        self.stdout.write(self.style.SUCCESS(
-            f'Created contract_workforce_instance'))
-
-        workforce_instance = Workforce.objects.create(
             user=User.objects.get(username=USER_Workforce),
-            contract=contract_workforce_instance
+            contractor=contractor_instance
         )
         self.stdout.write(self.style.SUCCESS(
             f'Created workforce_instance'))

@@ -23,7 +23,10 @@ class CaptchaLoginForm(AuthenticationForm):
             group_names = [
                 settings.GROUP_NAME_SYSTEM_ADMIN,
                 settings.GROUP_NAME_STS_MANAGER,
-                settings.GROUP_NAME_LANDFILL_MANAGER
+                settings.GROUP_NAME_LANDFILL_MANAGER,
+                settings.GROUP_NAME_CONTRACTOR_MANAGER,
+                settings.GROUP_NAME_WORKFORCE,
+                settings.GROUP_NAME_CITIZEN
             ]
             user_groups = Group.objects.filter(user=user, name__in=group_names)
             if not user_groups.exists():

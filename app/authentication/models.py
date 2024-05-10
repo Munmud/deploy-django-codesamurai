@@ -19,7 +19,11 @@ class Profile(models.Model):
 @shared_task
 def create_profile_offline(username):
     user = User.objects.get(username=username)
-    Profile.objects.create(user=user)
+    email = user.email
+    if email is None:
+        Profile.objects.create(user=user)
+    else:
+        Profile.objects.create(user=user, email=email)
 
 
 @receiver(models.signals.post_save, sender=User)
