@@ -201,6 +201,10 @@ EMAIL_HOST_PASSWORD = 'sutz opho plfu nbvv'  # Your email password
 GROUP_NAME_SYSTEM_ADMIN = 'System Admin'
 GROUP_NAME_STS_MANAGER = 'STS Manager'
 GROUP_NAME_LANDFILL_MANAGER = 'Landfill Manager'
+GROUP_NAME_CONTRACTOR_MANAGER = 'Contractor Manager'
+GROUP_NAME_WORKFORCE = 'Workforce'
+GROUP_NAME_CITIZEN = 'Citizen'
+
 FUEL_COST_PER_LITRE = 120
 PROD_WEB_URL = 'http://ec2-65-2-63-16.ap-south-1.compute.amazonaws.com'
 

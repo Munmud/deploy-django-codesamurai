@@ -310,3 +310,89 @@ class WasteTransferQueue(models.Model):
         choices=WASTE_TRANSFER_QUEUE_STATUS_CHOICES,
         default='Pending'
     )
+
+
+class Contract_Contractor(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    is_active = models.BooleanField(default=True)
+    payment_per_tonnage = models.DecimalField(max_digits=10, decimal_places=2)
+    required_daily_waste = models.DecimalField(max_digits=10, decimal_places=2)
+    area_of_collection = models.CharField(max_length=100)
+    sts = models.ForeignKey(STS, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+    # daily waste to transfer
+    #
+
+
+class Contractor(models.Model):
+    company_name = models.CharField(max_length=100, null=False, blank=False)
+    contract = models.ForeignKey(
+        Contract_Contractor, on_delete=models.DO_NOTHING)
+    registration_id = models.CharField(max_length=50)
+    registration_date = models.DateField()
+    tin = models.CharField(max_length=20)
+    contact_number = models.CharField(max_length=15)
+    # workforce_size = models.IntegerField()
+
+    def __str__(self):
+        return self.company_name
+
+
+class ContractorManager(models.Model):
+    contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['user']
+
+
+@receiver(models.signals.post_save, sender=ContractorManager)
+def create_contractor_manager(sender, instance, created, **kwargs):
+    if created:
+        group, create = Group.objects.get_or_create(
+            name=settings.GROUP_NAME_CONTRACTOR_MANAGER)
+        user = User.objects.get(username=instance.user.username)
+        user.groups.add(group)
+
+
+@receiver(models.signals.post_delete, sender=ContractorManager)
+def delete_contractor_manager(sender, instance, **kwargs):
+    group, created = Group.objects.get_or_create(
+        name=settings.GROUP_NAME_CONTRACTOR_MANAGER)
+    user = User.objects.get(username=instance.user.username)
+    user.groups.remove(group)
+
+
+class Contract_Workforce(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    job_title = models.CharField(max_length=100)
+    payment_rate_per_hour = models.DecimalField(
+        max_digits=10, decimal_places=2)
+    contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE)
+
+
+class Workforce(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract_Workforce, on_delete=models.CASCADE)
+
+
+@receiver(models.signals.post_save, sender=Workforce)
+def create_contractor_manager(sender, instance, created, **kwargs):
+    if created:
+        group, create = Group.objects.get_or_create(
+            name=settings.GROUP_NAME_WORKFORCE)
+        user = User.objects.get(username=instance.user.username)
+        user.groups.add(group)
+
+
+@receiver(models.signals.post_delete, sender=Workforce)
+def delete_contractor_manager(sender, instance, **kwargs):
+    group, created = Group.objects.get_or_create(
+        name=settings.GROUP_NAME_WORKFORCE)
+    user = User.objects.get(username=instance.user.username)
+    user.groups.remove(group)

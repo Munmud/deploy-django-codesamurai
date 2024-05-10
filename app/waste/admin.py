@@ -63,3 +63,43 @@ class STSManagerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(STSManager, STSManagerAdmin)
+
+
+class ContractorAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Contractor._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(Contractor, ContractorAdmin)
+
+
+class Contract_ContractorAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Contract_Contractor._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(Contract_Contractor, Contract_ContractorAdmin)
+
+
+class ContractorManagerAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in ContractorManager._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(ContractorManager, ContractorManagerAdmin)
+
+
+class Contract_WorkforceAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Contract_Workforce._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(Contract_Workforce, Contract_WorkforceAdmin)
+
+
+class WorkforceAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Workforce._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(Workforce, WorkforceAdmin)

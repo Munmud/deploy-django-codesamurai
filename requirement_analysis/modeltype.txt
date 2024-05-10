@@ -1,0 +1,50 @@
+cleaners 
+-----------
+outsourced, 
+contractors (with annual increments)
+fixed (with no increments)
+
+suggest a schedule
+-------------------
+1. Scheduled time for waste collection from a specific neighborhood. Collecting earlier has no benefit, but a late collection should be penalized.
+2. Multiple neighborhoods can be chained together for collecting waste and depositing it to the STS instead of going back and forth for each neighborhood.
+3. Emphasis should be put on bringing the required amount of waste to the designated STS within the collection hours of the STS.
+
+Bill generation
+--------------
+• Wc: Weight of waste collected by the contractor in tons.
+• Wr: Required waste the contractor must collect in tons.
+• Pt: Payment per tonnage of waste in taka.
+• F: Fine rate for each ton of waste not collected as required.
+
+Basic Pay = Wc × Pt
+Deficit = max(0, Wr − Wc)
+Fine = Deficit × F
+Total Bill = Basic Pay − Fine
+
+
+
+Logged Working Hours
+---------------------
+• Daily Log-in and Log-out Times
+• Total Hours Worked per Day
+• Overtime Hours
+• Absences and Leaves
+
+Entry every time the STS receives a load
+-----------------------------------------
+• Time and Date of Collection
+• Amount of Waste Collected (in kilograms)
+• Contractor ID
+• Type of Waste Collected (Domestic, plastic, construction waste)
+• Designated STS for Deposit
+• Vehicle Used for Transportation
+
+Collection Plan
+------------------
+• Area of collection
+• Collection start time
+• Duration for collection
+• Number of laborers
+• Number of vans
+• Expected weight of daily solid waste

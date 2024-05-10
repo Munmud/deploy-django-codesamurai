@@ -20,7 +20,7 @@ urlpatterns = [
     path('under_maintenance', under_maintenance, name='under_maintenance'),
 
     # notification
-    path('/view_all_notification', notification_app.read_all_notification,
+    path('view_all_notification', notification_app.read_all_notification,
          name="read_all_notification"),
 
     # auth

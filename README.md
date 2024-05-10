@@ -35,6 +35,11 @@ The API will then be available at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 - tutorials : `https://www.youtube.com/watch?v=mScd-Pc_pX0&pp=ygUZY2VsZXJ5IGVjMiBkb2NrZXItY29tcG9zZQ%3D%3D`
 - `ssh ec2-user@ec2-65-2-63-16.ap-south-1.compute.amazonaws.com`
+- `cd deploy-django-codesamurai`
+- `docker-compose -f docker-compose-deploy.yml down --volumes`
+- `git pull`
+- `docker-compose -f docker-compose-deploy.yml build`
+- `docker-compose -f docker-compose-deploy.yml up`
 
 - `sudo yum install git -y`
 - `sudo yum install docker -y`
