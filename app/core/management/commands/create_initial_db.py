@@ -9,7 +9,8 @@ from datetime import date
 from core.utils import (
     create_system_admin,
     load_sts,
-    load_vehicle
+    load_vehicle,
+    load_neighbourhood
 )
 from waste.models import *
 
@@ -129,6 +130,16 @@ def create_sts(self):
     return return_sts
 
 
+def create_neighbourhood(self):
+    cc = 0
+    for neighbourhood in load_neighbourhood():
+        sts = STS.objects.get(id=1)
+        Neighborhood.objects.get_or_create(sts=sts, **neighbourhood)
+        cc += 1
+    self.stdout.write(self.style.SUCCESS(
+        f'Successfully loaded {cc} neighbourhood into db...'))
+
+
 def create_landfill(self):
     landfill, _ = Landfill.objects.get_or_create(
         address="Amin Bazar Landfill",
@@ -223,3 +234,5 @@ class Command(BaseCommand):
         )
         self.stdout.write(self.style.SUCCESS(
             f'Created workforce_instance'))
+
+        create_neighbourhood(self)

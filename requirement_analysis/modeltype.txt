@@ -11,7 +11,7 @@ suggest a schedule
 3. Emphasis should be put on bringing the required amount of waste to the designated STS within the collection hours of the STS.
 
 Bill generation
---------------
+----------------
 • Wc: Weight of waste collected by the contractor in tons.
 • Wr: Required waste the contractor must collect in tons.
 • Pt: Payment per tonnage of waste in taka.

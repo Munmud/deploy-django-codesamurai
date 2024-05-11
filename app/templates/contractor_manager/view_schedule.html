@@ -1,0 +1,89 @@
+{% extends layout_path %}
+{% load poll_extras %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  <h2>Optimized Vehicles Schedules</h2>
+    <!-- Basic Bootstrap Table -->
+    <div class="card">
+      <h5 class="card-header">Ongoing Garbage Transfer</h5>
+      <div class="table-responsive text-nowrap p-5">
+        <table class="table">
+          <thead>
+            <tr>
+            <th>Vehicle ID</th>
+            <th>Neighborhood ID</th>
+            <th>Time</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            {% for item in schedules %}
+              <tr>
+                <td>
+                  <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ item.vehicle_id }}</strong>
+                </td>
+          <td>{{ item.neighborhood_id }}</td>
+          <td>{{ item.time }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- / Basic Bootstrap Table -->
+</br>
+<h2>Optimized path</h2>
+
+{% for path in paths %}
+  <!-- Activity Timeline -->
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <div class="row">
+        <h4 class="card-title m-0 me-2 p-3">Vehicle Id: {{ forloop.counter }}</h4>
+      </div>
+    </div>
+      <div class="card-body">
+        <ul class="timeline">
+          {% for neighbourhood in path %}
+            <li class="timeline-item timeline-item-transparent">
+              <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+              <div class="timeline-event">
+                <div class="timeline-header mb-1">
+                  <h6 class="mb-0">{{ neighbourhood }}</h6>
+                </div>
+              </div>
+            </li>
+          {% endfor %}
+                      <li class="timeline-item timeline-item-transparent">
+              <span class="timeline-point-wrapper"><span class="timeline-point timeline-point-warning"></span></span>
+              <div class="timeline-event">
+                <div class="timeline-header mb-1">
+                  <h6 class="mb-0">Transfer waste to Sts</h6>
+                </div>
+              </div>
+            </li>
+        </ul>
+        <!-- /Activity Timeline -->
+      </div>
+    {% endfor %}
+  </div>
+  <!-- / Activity Timeline -->
+{% endblock %}

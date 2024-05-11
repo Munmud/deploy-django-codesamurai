@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.utils import timezone
 from django.contrib import messages
 from django.conf import settings
+from django.utils import timezone
 
 
 import io
@@ -26,12 +27,91 @@ from core.utils import (
     is_landfill_manager,
     is_contractor_manager,
     is_workforce,
-    is_citizen
+    is_citizen,
+    generate_schedule
 )
 from .forms import *
 from .models import *
 
 from django.db.models import OuterRef, Subquery
+
+
+from django.shortcuts import render
+
+
+def get_schedule_sugggestion(request):
+    context = TemplateLayout.init(request, {})
+    if request.method == 'POST':
+        form = ScheduleSuggesstionForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            sts = form.cleaned_data['sts']
+            number_of_van = form.cleaned_data['number_of_vans']
+            neighborhoods = Neighborhood.objects.filter(sts=sts)
+            number_of_neighbourhood = len(neighborhoods)
+            neighbors = []
+            for neighborhood in neighborhoods:
+                arr = [neighborhood.id, float(neighborhood.latitude),
+                       float(neighborhood.longitude)]
+                neighbors.append(arr)
+            schedules, paths = generate_schedule(
+                number_of_neighbourhood=number_of_neighbourhood,
+                number_of_van=number_of_van,
+                neighbors=neighbors
+            )
+            schedules = [{'vehicle_id': schedule[0],
+                          'neighborhood_id': Neighborhood.objects.get(id=schedule[1]),
+                          'time': schedule[2]} for schedule in schedules]
+            paths = [[Neighborhood.objects.get(
+                id=p) for p in path] for path in paths]
+
+            context.update({'schedules': schedules, 'paths': paths})
+            # print(paths)
+            return render(request, 'contractor_manager/view_schedule.html', context)
+
+            # Do something with the selected STS and number of vans
+    else:
+        form = ScheduleSuggesstionForm()
+    context.update({'form': form})
+    return render(request, 'contractor_manager/request_schedule.html', context)
+
+
+def get_contractor_bill(request):
+    context = TemplateLayout.init(request, {})
+    if request.method == 'POST':
+        form = ContractorIDForm(request.POST)
+        if form.is_valid():
+            contract_id = form.cleaned_data['contract_id']
+            contractor = Contractor.objects.get(pk=contract_id)
+
+            transfer_volumes_today = WasteTransferToSts.objects.filter(
+                workforce_log__date=timezone.now().date(),
+                workforce_log__workforce__contractor=contractor
+            ).values_list('volume', flat=True).first()
+
+            expected_volumes = contractor.contract.required_daily_waste
+            print(f"transfer_volumes_today = {transfer_volumes_today}")
+            print(
+                f"contractor.contract.payment_per_tonnage = {contractor.contract.payment_per_tonnage}")
+            basic_pay = transfer_volumes_today * contractor.contract.payment_per_tonnage
+            Deficit = max(0, expected_volumes-transfer_volumes_today)
+            Fine = Deficit*settings.FINE_PER_TONAGE
+            Total_Bill = max(0, basic_pay-Fine)
+
+            context.update({
+                'Total_bill': Total_Bill,
+                'transfer_volumes_today': transfer_volumes_today,
+                'expected_volumes': expected_volumes,
+                'basic_pay': basic_pay,
+                'Fine': Fine,
+                'contractor': contractor
+            })
+
+            return render(request, 'sts_manager/bill_contractor.html', context)
+    else:
+        form = ContractorIDForm()
+    context.update({'form': form})
+    return render(request, 'sts_manager/bill_contractor_request.html', context)
 
 
 @user_passes_test(is_sts_manager)

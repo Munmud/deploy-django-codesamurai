@@ -3,7 +3,7 @@ from django.db.models import Sum
 from datetime import timedelta
 from django.utils import timezone
 
-from waste.models import WasteTransfer
+from waste.models import WasteTransfer, WasteTransferToSts
 
 
 def admin_generate_waste_transfer_volume_data_last_7_days():
@@ -70,6 +70,17 @@ def admin_generate_waste_transfer_fuel_cost_data_last_7_days():
     report_data_value = [int(b['total_cost'])
                          for _, b in report_data.items()]
     return report_data_key, report_data_value
+
+
+def sts_manager_total_waste_available():
+
+    # Get the total volume available
+    total_volume = WasteTransferToSts.objects.aggregate(
+        total_volume=Sum('volume'))['total_volume']
+
+    # If there are no volumes available, handle the case to avoid NoneType error
+    total_volume = total_volume or 0
+    return total_volume
 
 
 def sts_manager_generate_waste_transfer_volume_data_last_7_days(sts):

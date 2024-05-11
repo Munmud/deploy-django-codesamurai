@@ -29,6 +29,7 @@ from report.views import (
     sts_manager_generate_waste_transfer_fuel_cost_data_last_7_days,
     landfill_manager_generate_waste_transfer_volume_data_last_7_days,
     landfill_manager_generate_waste_transfer_fuel_cost_data_last_7_days,
+    sts_manager_total_waste_available,
 )
 
 
@@ -69,6 +70,7 @@ def dashboard(request):
 
         context.update({
             'sts': sts,
+            'available_waste': sts_manager_total_waste_available(),
             'waste_transfers': waste_transfers,
             'volume_data_last7_days_keys': volume_data_last7_days_keys,
             'volume_data_last7_days_values': volume_data_last7_days_values,

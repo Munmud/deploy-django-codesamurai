@@ -329,7 +329,7 @@ class Contract_Contractor(models.Model):
 
 
 class Contractor(models.Model):
-    company_name = models.CharField(max_length=100, null=False, blank=False)
+    company_name = models.CharField(max_length=100)
     contract = models.ForeignKey(
         Contract_Contractor, on_delete=models.DO_NOTHING)
     registration_id = models.CharField(max_length=50)
@@ -338,8 +338,8 @@ class Contractor(models.Model):
     contact_number = models.CharField(max_length=15)
     # workforce_size = models.IntegerField()
 
-    def __str__(self):
-        return self.company_name
+    # def __str__(self):
+    #     return self.company_name
 
 
 class ContractorManager(models.Model):
@@ -406,6 +406,17 @@ class WasteTransferToSts(models.Model):
         Workforce_WorkHours, on_delete=models.CASCADE)
     volume = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
+    # sts = models.ForeignKey(STS, on_delete=models.CASCADE)
+
+
+class Neighborhood(models.Model):
+    name = models.CharField(max_length=100)
+    latitude = models.CharField(max_length=20)
+    longitude = models.CharField(max_length=20)
+    sts = models.ForeignKey(STS, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 @receiver(models.signals.post_save, sender=Workforce)

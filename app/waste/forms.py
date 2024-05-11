@@ -1,5 +1,23 @@
 from django import forms
-from .models import Vehicle, WasteTransfer, Path, Workforce_WorkHours, Workforce, WasteTransferToSts
+from .models import (
+    Vehicle,
+    WasteTransfer,
+    Path,
+    Workforce_WorkHours,
+    Workforce,
+    WasteTransferToSts,
+    STS
+)
+
+
+class ScheduleSuggesstionForm(forms.Form):
+    sts = forms.ModelChoiceField(
+        queryset=STS.objects.all(), label='Select STS')
+    number_of_vans = forms.IntegerField(label='Number of Vans')
+
+
+class ContractorIDForm(forms.Form):
+    contract_id = forms.CharField(label='Contract ID', max_length=100)
 
 
 class AddWasteForm(forms.ModelForm):

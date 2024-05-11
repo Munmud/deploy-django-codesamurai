@@ -1,0 +1,34 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  Dashboard - Analytics
+{% endblock %}
+
+{% block vendor_css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block vendor_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block page_js %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  <h2>Workforce Details</h2>
+  <div class="row mt-3">
+    <div class="col-md-6">
+      <h4>Contractor: {{ contractor.company_name }}</h4>
+      <p>Transfer Volumes Today: {{ transfer_volumes_today }}</p>
+      <p>Expected Volumes: {{ expected_volumes }}</p>
+      <p>Basic Pay: {{ basic_pay }}</p>
+      <p>Fine: {{ Fine }}</p>
+      <p>Total Bill: {{ Total_bill }}</p>
+    </div>
+  </div>
+{% endblock %}

@@ -65,12 +65,13 @@ class STSManagerAdmin(admin.ModelAdmin):
 admin.site.register(STSManager, STSManagerAdmin)
 
 
-class ContractorAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Contractor._meta.fields]
-    list_per_page = 20
+# class ContractorAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in Contractor._meta.fields]
+#     list_per_page = 20
 
 
-admin.site.register(Contractor, ContractorAdmin)
+# admin.site.register(Contractor, ContractorAdmin)
+admin.site.register(Contractor)
 
 
 class Contract_ContractorAdmin(admin.ModelAdmin):
@@ -111,3 +112,11 @@ class WasteTransferToStsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(WasteTransferToSts, WasteTransferToStsAdmin)
+
+
+class NeighborhoodAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Neighborhood._meta.fields]
+    list_per_page = 20
+
+
+admin.site.register(Neighborhood, NeighborhoodAdmin)

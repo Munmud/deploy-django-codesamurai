@@ -14,11 +14,11 @@ COPY ./scripts /scripts
 WORKDIR /app
 EXPOSE 8000
 
-RUN python -m venv /py && \
-    /py/bin/pip install --upgrade pip
 
-RUN python -m venv /py && \
-    /py/bin/pip install -r /requirements.txt
+RUN apk add --no-cache build-base python3-dev g++
+RUN pip install scikit-learn
+RUN pip install numpy networkx geopy
+RUN pip install -r /requirements.txt
 
 RUN apk del .tmp-build-deps && \
     adduser --disabled-password --no-create-home app

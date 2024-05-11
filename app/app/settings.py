@@ -206,6 +206,7 @@ GROUP_NAME_WORKFORCE = 'Workforce'
 GROUP_NAME_CITIZEN = 'Citizen'
 
 FUEL_COST_PER_LITRE = 120
+FINE_PER_TONAGE = 20
 PROD_WEB_URL = 'http://ec2-65-2-63-16.ap-south-1.compute.amazonaws.com'
 
 

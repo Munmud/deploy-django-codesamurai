@@ -49,7 +49,14 @@ urlpatterns = [
     # Ststem Admin
     #     path('system_admin/add_vehicle/', waste_app.add_vehicle, name="add_vehicle"),
 
-    # STS Manager add_waste
+    # STS Manager  get_schedule_sugggestion
+
+    path('sts_manager/get_schedule_sugggestion',
+         waste_app.get_schedule_sugggestion, name="get_schedule_sugggestion"),
+
+    path('sts_manager/contractor_bill',
+         waste_app.get_contractor_bill, name="get_contractor_bill"),
+
     path('sts_manager/waste_transfer/<int:pk>',
          waste_app.add_waste, name="add_waste"),
 
